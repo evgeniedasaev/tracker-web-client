@@ -1,5 +1,4 @@
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 const base = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -16,10 +15,7 @@ export async function api<T>(path: string, init: ApiRequestInit = {}): Promise<T
   const token = cookieStore.get('accessToken')?.value;
   if (token && !isPublic) requestHeaders.set('Authorization', `Bearer ${token}`);
 
-  if (!token && !isPublic) {
-    // todo: throw an error handle it outside
-    redirect('/');
-  }
+  if (!token && !isPublic) throw new Error('No auth token for non public method');
 
   const res = await fetch(`${base}${path}`, {
     ...requestInit,
@@ -29,22 +25,12 @@ export async function api<T>(path: string, init: ApiRequestInit = {}): Promise<T
   const contentType = res.headers.get('content-type') ?? '';
   const bodyText = await res.text();
 
-  if (!bodyText) {
-    // todo: throw error handle outside
-    return undefined as T;
-  }
-
-  if (!contentType.includes('application/json')) {
-    // todo: throw error handle outside
-    return bodyText as unknown as T;
-  }
+  if (!bodyText) throw new Error('Responce body is empty');
+  if (!contentType.includes('application/json')) throw new Error('Responce is not json');
 
   try {
     return { success: res.ok, ...JSON.parse(bodyText) } as T;
   } catch (error) {
-    // todo: throw error handle outside
-    console.log('Failed to parse JSON response', error);
+    throw new Error('Failed to parse JSON response');
   }
-
-  return undefined as T;
 }

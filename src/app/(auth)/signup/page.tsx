@@ -21,7 +21,7 @@ function SignupForm() {
 
   return (
     <>
-      {message ? <p className="text-error text-sm">{message}</p> : null}
+      {message ? <p className="text-error text-sm m-4">{message}</p> : null}
       <form className="card-body" action={signupFormAction}>
         <fieldset className="fieldset">
           <label className="label">Email</label>
