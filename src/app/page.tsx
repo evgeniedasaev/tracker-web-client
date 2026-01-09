@@ -1,18 +1,63 @@
-import {api} from '@/app/api';
+import { Metadata } from 'next';
+import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Tracker',
+  description: 'Welcome to tracker app',
+};
 
 export default async function Home() {
-  const me = await api<{id: string; email: string}>('/v2/users/me');
   return (
     <main>
       <div className="hero bg-base-200 min-h-screen">
         <div className="hero-content text-center">
           <div className="max-w-md">
-            <h1 className="text-5xl font-bold">Hello there, {JSON.stringify(me, null, 2)}</h1>
-            <p className="py-6">
-              Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-              quasi. In deleniti eaque aut repudiandae et a id nisi.
-            </p>
-            <button className="btn btn-primary">Get Started</button>
+            <h1 className="text-5xl font-bold">Welcome to Tracker</h1>
+            <p className="py-6">The only one tool to organize your way for building muscles</p>
+            <div className="join">
+              <Link href="/login" className="btn bg-white text-black border-[#e5e5e5]">
+                <svg
+                  aria-label="Email icon"
+                  width="16"
+                  height="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                >
+                  <g
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    strokeWidth="2"
+                    fill="none"
+                    stroke="black"
+                  >
+                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                  </g>
+                </svg>
+                Login with Email
+              </Link>
+              <Link href="/signup" className="btn bg-white text-black border-[#e5e5e5]">
+                <svg
+                  aria-label="Email icon"
+                  width="16"
+                  height="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                >
+                  <g
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    strokeWidth="2"
+                    fill="none"
+                    stroke="black"
+                  >
+                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                  </g>
+                </svg>
+                Signup with Email
+              </Link>
+            </div>
           </div>
         </div>
       </div>
