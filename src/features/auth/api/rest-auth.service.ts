@@ -1,5 +1,10 @@
 import { apiRequest } from '@/shared/api/client';
-import { AuthResponse, authResponseSchema, Credentials } from '@/features/auth/model/contracts';
+import {
+  AuthResponse,
+  authResponseSchema,
+  Credentials,
+  AuthFieldErrors,
+} from '@/features/auth/model/contracts';
 import { AuthService, AuthServiceResult } from '@/features/auth/model/service';
 
 const mapResponse = (response: { ok: boolean; data: AuthResponse | null; error?: string }) => {
@@ -7,7 +12,10 @@ const mapResponse = (response: { ok: boolean; data: AuthResponse | null; error?:
     return { ok: true, accessToken: response.data.accessToken } satisfies AuthServiceResult;
   }
 
-  const details = response.data && 'details' in response.data ? response.data.details : undefined;
+  const details =
+    response.data && 'details' in response.data
+      ? (response.data.details as AuthFieldErrors | undefined)
+      : undefined;
   return {
     ok: false,
     message: response.data?.message || response.error,
