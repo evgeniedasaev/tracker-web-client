@@ -17,6 +17,8 @@ const eslintConfig = defineConfig([
     'build/**',
     'next-env.d.ts',
     'eslint.config.mjs',
+    'commitlint.config.cjs',
+    'postcss.config.mjs',
   ]),
   eslint.configs.recommended,
   // Stronger TS/React type checking.
