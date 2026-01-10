@@ -34,10 +34,10 @@ export async function middleware(req: NextRequest) {
 
   const refreshRes = await fetch(`${api}/v2/auth/refresh`, {
     method: 'POST',
-    credentials: 'include',
     headers: {
       accept: 'application/json',
       'Content-Type': 'application/json',
+      cookie: req.headers.get('cookie') ?? '',
     },
     cache: 'no-store',
   });
@@ -53,5 +53,6 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
+  // TODO: Add protected route matchers when user-facing routes exist.
   matcher: [],
 };

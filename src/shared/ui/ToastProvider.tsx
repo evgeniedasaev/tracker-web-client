@@ -1,6 +1,14 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -18,6 +26,7 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const timeoutIds = useRef<Set<number>>(new Set());
 
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
@@ -27,14 +36,24 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     (message: string, type: ToastType = 'info') => {
       const id = crypto.randomUUID();
       setToasts((prev) => [...prev, { id, message, type }]);
-      setTimeout(() => {
+      const timeoutId = window.setTimeout(() => {
         removeToast(id);
       }, 3500);
+      timeoutIds.current.add(timeoutId);
     },
     [removeToast],
   );
 
   const value = useMemo(() => ({ notify }), [notify]);
+
+  useEffect(() => {
+    return () => {
+      timeoutIds.current.forEach((timeoutId) => {
+        clearTimeout(timeoutId);
+      });
+      timeoutIds.current.clear();
+    };
+  }, []);
 
   return (
     <ToastContext.Provider value={value}>
