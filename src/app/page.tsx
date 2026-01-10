@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: 'Welcome to tracker app',
 };
 
-export default async function Home() {
+export default function Home() {
   return (
     <main>
       <div className="hero bg-base-200 min-h-screen">
