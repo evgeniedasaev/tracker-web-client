@@ -1,7 +1,7 @@
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { api } from '@libs/api';
+import { publicApiFetch } from '@libs/fetch/public.api-fetch';
+import { accessTokenStore } from '@libs/auth/access-token.store';
 
 const credentialsSchema = z.object({
   email: z.string().trim().email({ message: 'Email format is invalid' }),
@@ -19,8 +19,6 @@ export type AuthState = {
 type AuthResponse = {
   success?: boolean;
   accessToken?: string;
-  refreshToken?: string;
-  sessionId?: string;
   code?: string;
   message?: string;
   details?: Record<string, string[]>;
@@ -43,35 +41,6 @@ const buildApiFieldErrors = (details: Record<string, string[]> = {}): FieldError
     Object.entries(details).map(([field, messages]) => [field, messages?.join(', ') ?? '']),
   );
 
-async function setAuthCookies(
-  tokens: Pick<AuthResponse, 'accessToken' | 'refreshToken' | 'sessionId'>,
-) {
-  const { accessToken, refreshToken, sessionId } = tokens;
-  const cookieStore = await cookies();
-
-  accessToken &&
-    cookieStore.set('accessToken', accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      maxAge: 60 * 60,
-    });
-  refreshToken &&
-    cookieStore.set('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      maxAge: 60 * 60,
-    });
-  sessionId &&
-    cookieStore.set('sessionId', sessionId, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      maxAge: 60 * 60,
-    });
-}
-
 export function createAuthAction({ endpoint, defaultErrorMessage }: AuthActionConfig) {
   return async function authAction(_prevState: AuthState, formData: FormData): Promise<AuthState> {
     const parsed = credentialsSchema.safeParse({
@@ -91,27 +60,25 @@ export function createAuthAction({ endpoint, defaultErrorMessage }: AuthActionCo
     let responseData: AuthResponse = {};
 
     try {
-      responseData = await api<AuthResponse>(endpoint, {
+      responseData = await publicApiFetch<AuthResponse>(endpoint, {
         method: 'POST',
-        bodyJson: { email, password },
-        isPublic: true,
+        body: JSON.stringify({ email, password }),
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        cache: 'no-store',
       });
     } catch (error) {
-      console.log(error);
+      console.log('!', error);
       return { success: false, message: defaultErrorMessage };
     }
 
-    const {
-      success = false,
-      accessToken,
-      refreshToken,
-      sessionId,
-      message,
-      details = {},
-    } = responseData;
-
-    if (success) {
-      await setAuthCookies({ accessToken, refreshToken, sessionId });
+    const { success = false, accessToken, message, details = {} } = responseData;
+    console.log('!', accessTokenStore);
+    if (success && accessToken) {
+      accessTokenStore.set(accessToken);
       redirect('/');
     }
 
