@@ -1,26 +1,23 @@
 #!/usr/bin/env sh
 
-if [ -z "$husky_skip_init" ]; then
-  debug() {
-    [ "$HUSKY_DEBUG" = "1" ] && echo "husky (debug) - $1"
-  }
+n="$(basename -- "$0")"
+s="$(dirname -- "$0")/../$n"
 
-  readonly hook_name="$(basename "$0")"
-  debug "starting $hook_name..."
+[ ! -f "$s" ] && exit 0
 
-  if [ "$HUSKY" = "0" ]; then
-    debug "HUSKY env variable is set to 0, skipping hook"
-    exit 0
-  fi
-
-  if [ -r ~/.huskyrc ]; then
-    debug "sourcing ~/.huskyrc"
-    . ~/.huskyrc
-  fi
-
-  export readonly husky_skip_init=1
-  sh -e "$0" "$@"
-  exitCode="$?"
-  debug "finished $hook_name, exit code $exitCode"
-  exit "$exitCode"
+if [ -f "$HOME/.huskyrc" ]; then
+  echo "husky - '~/.huskyrc' is DEPRECATED, please move your code to ~/.config/husky/init.sh"
 fi
+
+i="${XDG_CONFIG_HOME:-$HOME/.config}/husky/init.sh"
+[ -f "$i" ] && . "$i"
+
+[ "${HUSKY-}" = "0" ] && exit 0
+
+export PATH="node_modules/.bin:$PATH"
+sh -e "$s" "$@"
+c="$?"
+
+[ "$c" != 0 ] && echo "husky - $n script failed (code $c)"
+[ "$c" = 127 ] && echo "husky - command not found in PATH=$PATH"
+exit "$c"
