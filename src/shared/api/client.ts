@@ -60,7 +60,7 @@ const performRequest = (url: string, init: RequestInit) =>
 
 const withJsonBody = (body?: unknown) => (body ? JSON.stringify(body) : undefined);
 
-export async function apiRequest<TResponse, TSchema = unknown>(
+export async function apiRequest<TResponse, TSchema = TResponse>(
   options: ApiRequestOptions<TSchema>,
 ): Promise<ApiResult<TResponse>> {
   const { path, method = 'GET', body, auth = 'public', schema } = options;
@@ -92,7 +92,7 @@ export async function apiRequest<TResponse, TSchema = unknown>(
       return {
         ok: retryRes.ok,
         status: retryRes.status,
-        data: safeData.data,
+        data: safeData.data as TResponse,
         error: parsedRetry.error,
       };
     }
