@@ -3,12 +3,12 @@ import { config } from '@/shared/config/config';
 import { getAccessToken, refreshAccessToken, setAccessToken } from '@/shared/api/token';
 import { logger } from '@/shared/lib/logger';
 
-type ApiRequestOptions<TSchema> = {
+type ApiRequestOptions<TResponse> = {
   path: string;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
   auth?: 'public' | 'required';
-  schema?: z.ZodType<TSchema>;
+  schema?: z.ZodType<TResponse>;
 };
 
 export type ApiResult<T> = {
@@ -60,8 +60,8 @@ const performRequest = (url: string, init: RequestInit) =>
 
 const withJsonBody = (body?: unknown) => (body ? JSON.stringify(body) : undefined);
 
-export async function apiRequest<TResponse, TSchema = unknown>(
-  options: ApiRequestOptions<TSchema>,
+export async function apiRequest<TResponse>(
+  options: ApiRequestOptions<TResponse>,
 ): Promise<ApiResult<TResponse>> {
   const { path, method = 'GET', body, auth = 'public', schema } = options;
   const apiUrl = `${config.apiBaseUrl}${path}`;

@@ -20,7 +20,7 @@ export const authErrorSchema = z.object({
   success: z.boolean().optional(),
   message: z.string().optional(),
   code: z.string().optional(),
-  details: z.record(z.array(z.string())).optional(),
+  details: z.record(z.string(), z.array(z.string())).optional(),
 });
 
 export const authResponseSchema = z.union([authSuccessSchema, authErrorSchema]);
