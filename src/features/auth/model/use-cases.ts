@@ -1,9 +1,10 @@
 import { redirect } from 'next/navigation';
 import { setAccessToken } from '@/shared/api/token';
 import type { AuthState } from '@/features/auth/model/view-model';
-import { buildFieldErrors, buildStateFromValidation } from '@/features/auth/model/view-model';
 import { validateCredentials } from '@/features/auth/model/service';
 import { getAuthService } from '@/features/auth/model/service-registry';
+import { buildStateFromValidation, mapErrorServiceResultToState } from '@/shared/lib/view-model.helpers';
+import type { Credentials } from '@/features/auth/model/contracts';
 
 type UseCaseConfig = {
   action: 'login' | 'signup';
@@ -13,7 +14,7 @@ type UseCaseConfig = {
 export function createAuthAction({ action, defaultErrorMessage }: UseCaseConfig) {
   return async function authAction(_prevState: AuthState, formData: FormData): Promise<AuthState> {
     const parsed = validateCredentials(formData);
-    if (!parsed.success) return buildStateFromValidation(parsed.error);
+    if (!parsed.success) return buildStateFromValidation<Credentials>(parsed.error);
 
     const credentials = parsed.data;
     const authService = getAuthService();
@@ -21,13 +22,9 @@ export function createAuthAction({ action, defaultErrorMessage }: UseCaseConfig)
 
     if (result.ok) {
       await setAccessToken(result.accessToken);
-      redirect('/');
+      redirect('/workouts');
     }
 
-    return {
-      success: false,
-      message: result.message || defaultErrorMessage,
-      fieldErrors: buildFieldErrors(result.fieldErrors),
-    };
+    return mapErrorServiceResultToState(result, defaultErrorMessage);
   };
 }

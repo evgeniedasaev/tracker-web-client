@@ -1,8 +1,7 @@
-import { Credentials, credentialsSchema, AuthFieldErrors } from '@/features/auth/model/contracts';
+import { ServiceResult } from '@/shared/lib/view-model.helpers';
+import { Credentials, credentialsSchema } from '@/features/auth/model/contracts';
 
-export type AuthServiceResult =
-  | { ok: true; accessToken: string }
-  | { ok: false; message?: string; fieldErrors?: AuthFieldErrors };
+export type AuthServiceResult = ServiceResult<{ accessToken: string }>;
 
 export type AuthService = {
   login(credentials: Credentials): Promise<AuthServiceResult>;
