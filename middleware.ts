@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-const PROTECTED_MATCHERS = ['/app', '/dashboard'];
+const PROTECTED_MATCHERS = ['/workouts'];
 const ACCESS_TOKEN_COOKIE = 'accessToken';
 
 const buildCookieOptions = () => ({
@@ -54,5 +54,5 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   // TODO: Add protected route matchers when user-facing routes exist.
-  matcher: [],
+  matcher: ['/workouts', '/workouts/:path*'],
 };
