@@ -6,14 +6,14 @@ export const metadata: Metadata = {
   description: 'Welcome to tracker app',
 };
 
-export default function Home() {
+export default function HomePage() {
   return (
     <main>
       <div className="hero bg-base-200 min-h-screen">
         <div className="hero-content text-center">
           <div className="max-w-md">
             <h1 className="text-5xl font-bold">Welcome to Tracker</h1>
-            <p className="py-6">The only one tool to organize your way for building muscles</p>
+            <p className="py-6">The only tool to organize your way for building muscles</p>
             <div className="join">
               <Link href="/login" className="btn bg-white text-black border-[#e5e5e5]">
                 <svg

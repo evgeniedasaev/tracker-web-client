@@ -1,7 +1,7 @@
 import { AuthForm } from '@/features/auth/ui/AuthForm';
 import { signupAction } from '@/features/auth/actions/signup.action';
 
-export default function SignUp() {
+export default function SignUpPage() {
   return (
     <AuthForm
       title="Join now!"
