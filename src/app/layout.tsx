@@ -30,7 +30,11 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-function Navigation({ className }) {
+type NavigationProps = {
+  className: string;
+};
+
+function Navigation({ className }: NavigationProps) {
   return (
     <ul className={className}>
       {/* Sidebar content here */}
