@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { WorkoutFull, getByIdAction } from '@/features/workouts';
+import { WorkoutFull, getByIdQuery } from '@/features/workouts';
 
 export const metadata: Metadata = {
   title: 'Workout Details | Traker',
@@ -10,5 +10,5 @@ export const metadata: Metadata = {
 export default async function WorkoutPage({ params }: { params: Promise<{ workoutId: string }> }) {
   const { workoutId } = await params;
 
-  return <WorkoutFull workoutId={workoutId} action={getByIdAction} />;
+  return <WorkoutFull workoutId={workoutId} action={getByIdQuery} />;
 }

@@ -7,8 +7,8 @@ type UseCaseConfig = {
   defaultErrorMessage?: string;
 };
 
-export function createListAction({ workoutsService, defaultErrorMessage }: UseCaseConfig) {
-  return async function listAction(_prevState: WorkoutsListState): Promise<WorkoutsListState> {
+export function createListUseCase({ workoutsService, defaultErrorMessage }: UseCaseConfig) {
+  return async function listUseCase(_prevState: WorkoutsListState): Promise<WorkoutsListState> {
     const result = await workoutsService.list();
 
     if (result.ok) {
@@ -22,8 +22,8 @@ export function createListAction({ workoutsService, defaultErrorMessage }: UseCa
   };
 }
 
-export function createGetByIdAction({ workoutsService, defaultErrorMessage }: UseCaseConfig) {
-  return async function getByIdAction(
+export function createGetByIdUseCase({ workoutsService, defaultErrorMessage }: UseCaseConfig) {
+  return async function getByIdUseCase(
     _prevState: WorkoutByIdState,
     workoutId: string,
   ): Promise<WorkoutByIdState> {

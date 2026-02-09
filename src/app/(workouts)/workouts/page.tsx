@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { WorkoutsList, listAction } from '@/features/workouts';
+import { WorkoutsList, listQuery } from '@/features/workouts';
 
 export const metadata: Metadata = {
   title: 'Workouts | Traker',
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function WorkoutsPage() {
-  return <WorkoutsList action={listAction} />;
+  return <WorkoutsList action={listQuery} />;
 }

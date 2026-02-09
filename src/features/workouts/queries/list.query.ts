@@ -1,13 +1,13 @@
-import { createListAction } from '@/features/workouts/model/use-cases';
+import { createListUseCase } from '@/features/workouts/model/use-cases';
 import { WorkoutsListState } from '@/features/workouts/model/view-model';
 import { getWorkoutsService } from '@/features/workouts/service/registry';
 
-const list = createListAction({
+const listUseCase = createListUseCase({
   workoutsService: getWorkoutsService(),
   defaultErrorMessage: 'Failed to load workouts',
 });
 
-export async function listAction(prevState: WorkoutsListState): Promise<WorkoutsListState> {
+export async function listQuery(prevState: WorkoutsListState): Promise<WorkoutsListState> {
   'use server';
-  return list(prevState);
+  return listUseCase(prevState);
 }
