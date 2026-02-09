@@ -1,33 +1,28 @@
 import { redirect } from 'next/navigation';
-import { setAccessToken } from '@/shared/api/token';
 import type { AuthState } from '@/features/auth/model/view-model';
-import { buildFieldErrors, buildStateFromValidation } from '@/features/auth/model/view-model';
-import { validateCredentials } from '@/features/auth/model/service';
-import { getAuthService } from '@/features/auth/model/service-registry';
+import type { AuthService, SessionService } from '@/features/auth/model/service.interface';
+import { mapErrorServiceResultToState } from '@/shared/model/view-model';
+import type { AuthCredentials } from '@/features/auth/model/types';
 
 type UseCaseConfig = {
-  action: 'login' | 'signup';
-  defaultErrorMessage: string;
+  authServiceMethod: AuthService['login'] | AuthService['signup'];
+  sessionService: SessionService;
+  defaultErrorMessage?: string;
 };
 
-export function createAuthAction({ action, defaultErrorMessage }: UseCaseConfig) {
-  return async function authAction(_prevState: AuthState, formData: FormData): Promise<AuthState> {
-    const parsed = validateCredentials(formData);
-    if (!parsed.success) return buildStateFromValidation(parsed.error);
-
-    const credentials = parsed.data;
-    const authService = getAuthService();
-    const result = await authService[action](credentials);
+export function createAuthAction({
+  authServiceMethod,
+  sessionService,
+  defaultErrorMessage,
+}: UseCaseConfig) {
+  return async function authAction(credentials: AuthCredentials): Promise<AuthState> {
+    const result = await authServiceMethod(credentials);
 
     if (result.ok) {
-      await setAccessToken(result.accessToken);
-      redirect('/');
+      await sessionService.setAccessToken(result.accessToken);
+      redirect('/workouts');
     }
 
-    return {
-      success: false,
-      message: result.message || defaultErrorMessage,
-      fieldErrors: buildFieldErrors(result.fieldErrors),
-    };
+    return mapErrorServiceResultToState(result, defaultErrorMessage);
   };
 }

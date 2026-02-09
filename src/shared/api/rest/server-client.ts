@@ -1,6 +1,7 @@
+import 'server-only';
 import { z } from 'zod';
 import { config } from '@/shared/config/config';
-import { getAccessToken, refreshAccessToken, setAccessToken } from '@/shared/api/token';
+import { getAccessToken, refreshAccessToken, setAccessToken } from '@/shared/auth/cookie/token';
 import { logger } from '@/shared/lib/logger';
 
 type ApiRequestOptions<TResponse> = {
@@ -69,7 +70,13 @@ export async function apiRequest<TResponse>(
   const token = auth === 'required' ? await getAccessToken() : null;
   const headers = buildHeaders({}, token ?? undefined);
 
-  const firstRes = await performRequest(apiUrl, { method, headers, body: withJsonBody(body) });
+  let firstRes: Response;
+  try {
+    firstRes = await performRequest(apiUrl, { method, headers, body: withJsonBody(body) });
+  } catch (error) {
+    logger.error('API request failed', { error, path, method });
+    return { ok: false, status: 0, data: null, error: 'Fetch failed' };
+  }
   if (firstRes.status === 401 && auth === 'required') {
     const refreshedToken = await refreshAccessToken();
     if (!refreshedToken) {
@@ -77,7 +84,13 @@ export async function apiRequest<TResponse>(
     }
 
     headers.set('Authorization', `Bearer ${refreshedToken}`);
-    const retryRes = await performRequest(apiUrl, { method, headers, body: withJsonBody(body) });
+    let retryRes: Response;
+    try {
+      retryRes = await performRequest(apiUrl, { method, headers, body: withJsonBody(body) });
+    } catch (error) {
+      logger.error('API request retry failed', { error, path, method });
+      return { ok: false, status: 0, data: null, error: 'Fetch failed' };
+    }
     const parsedRetry = await parseResponse<TResponse>(retryRes);
 
     if (retryRes.ok && refreshedToken) await setAccessToken(refreshedToken);

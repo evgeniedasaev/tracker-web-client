@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
       fullUrl: true,
     },
   },
+  experimental: {
+    optimizeCss: false,
+  },
 };
 
 export default nextConfig;

@@ -1,3 +1,4 @@
+import 'server-only';
 import { cookies } from 'next/headers';
 import { config } from '@/shared/config/config';
 import { logger } from '@/shared/lib/logger';

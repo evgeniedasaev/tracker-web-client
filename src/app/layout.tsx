@@ -3,6 +3,14 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Link from 'next/link';
 import { ToastProvider } from '@/shared/ui/ToastProvider';
+import {
+  TrophyIcon,
+  Bars3Icon,
+  XCircleIcon,
+  ArrowRightEndOnRectangleIcon,
+  UserCircleIcon,
+  BoltIcon,
+} from '@heroicons/react/20/solid';
 
 export const metadata: Metadata = {
   title: {
@@ -22,6 +30,36 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+type NavigationProps = {
+  className: string;
+};
+
+function Navigation({ className }: NavigationProps) {
+  return (
+    <ul className={className}>
+      {/* Sidebar content here */}
+      <li>
+        <Link href="/workouts">
+          <TrophyIcon className="h-5 w-5 text-warning" />
+          Workouts
+        </Link>
+      </li>
+      <li>
+        <Link href="/me">
+          <UserCircleIcon className="h-5 w-5 text-warning" />
+          Profile
+        </Link>
+      </li>
+      <li>
+        <Link href="/logout">
+          <ArrowRightEndOnRectangleIcon className="h-5 w-5 text-warning" />
+          Logout
+        </Link>
+      </li>
+    </ul>
+  );
+}
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
@@ -38,46 +76,27 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     aria-label="open sidebar"
                     className="btn btn-square btn-ghost"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      className="inline-block h-6 w-6 stroke-current"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M4 6h16M4 12h16M4 18h16"
-                      ></path>
-                    </svg>
+                    <Bars3Icon className="inline-block h-6 w-6 stroke-current" />
                   </label>
                 </div>
-                <Link href="/" className="mx-2 flex-1 px-2">
-                  Tracker
-                </Link>
+                <div className="flex-1">
+                  <Link href="/" className="btn btn-ghost btn-warning text-xl">
+                    <BoltIcon className="w-6 h-6" />
+                    Tracker
+                  </Link>
+                </div>
                 <div className="hidden flex-none lg:block">
-                  <ul className="menu menu-horizontal">
-                    {/* Navbar menu content here */}
-                    {/*<li><a>Navbar Item 1</a></li>*/}
-                    {/*<li><a>Navbar Item 2</a></li>*/}
-                  </ul>
+                  <Navigation className="menu menu-horizontal" />
                 </div>
               </div>
               {/* Page content here */}
               {children}
             </div>
             <div className="drawer-side">
-              <label
-                htmlFor="my-drawer-2"
-                aria-label="close sidebar"
-                className="drawer-overlay"
-              ></label>
-              <ul className="menu bg-base-200 min-h-full w-80 p-4">
-                {/* Sidebar content here */}
-                {/*<li><a>Sidebar Item 1</a></li>*/}
-                {/*<li><a>Sidebar Item 2</a></li>*/}
-              </ul>
+              <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay">
+                <XCircleIcon className="inline-block h-6 w-6 stroke-current" />
+              </label>
+              <Navigation className="menu bg-base-200 min-h-full w-80 p-4" />
             </div>
           </div>
         </ToastProvider>
