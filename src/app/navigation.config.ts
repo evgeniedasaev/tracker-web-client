@@ -1,3 +1,4 @@
+import type { ComponentType, SVGProps } from 'react';
 import {
   TrophyIcon,
   ArrowRightEndOnRectangleIcon,
@@ -8,7 +9,7 @@ export type NavigationItem = {
   key: string;
   label: string;
   href: string;
-  icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
 };
 
 export type NavigationSection = {
