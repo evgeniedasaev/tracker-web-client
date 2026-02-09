@@ -62,7 +62,13 @@ export async function apiRequest<TResponse>(
   const apiUrl = `${config.apiBaseUrl}${path}`;
 
   const headers = buildHeaders({});
-  const res = await performRequest(apiUrl, { method, headers, body: withJsonBody(body) });
+  let res: Response;
+  try {
+    res = await performRequest(apiUrl, { method, headers, body: withJsonBody(body) });
+  } catch (error) {
+    logger.error('API request failed', { error, path, method });
+    return { ok: false, status: 0, data: null, error: 'Fetch failed' };
+  }
   const parsed = await parseResponse<TResponse>(res);
 
   if (schema) {

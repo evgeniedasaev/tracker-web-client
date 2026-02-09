@@ -1,4 +1,4 @@
-import { setAccessToken } from '@/shared/token/cookie/token';
+import { setAccessToken } from '@/shared/auth/cookie/token';
 import type { SessionService } from '@/features/auth/model/service.interface';
 
 export const sessionService: SessionService = {
