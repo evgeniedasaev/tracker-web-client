@@ -18,5 +18,6 @@ export const workoutsSuccessSchema = z.object({
 export const workoutsResponseSchema = z.union([workoutsSuccessSchema, apiErrorSchema]);
 export const workoutByIdResponseSchema = z.union([workoutScheme, apiErrorSchema]);
 
+export type WorkoutDto = z.infer<typeof workoutScheme>;
 export type WorkoutsResponse = z.infer<typeof workoutsResponseSchema>;
 export type WorkoutByIdResponse = z.infer<typeof workoutByIdResponseSchema>;

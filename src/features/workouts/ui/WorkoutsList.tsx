@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Workout, WorkoutsListState } from '@/features/workouts/model/view-model';
+import { Workout } from '@/features/workouts/model/types';
 import { WorkoutItem } from '@/features/workouts/ui/WorkoutItem';
+import type { WorkoutsListState } from '@/features/workouts/model/view-model';
 
 type WorkoutsListProps = {
   action: (_state: WorkoutsListState) => Promise<WorkoutsListState>;
@@ -32,7 +33,7 @@ export function WorkoutsList({ action }: WorkoutsListProps) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [action]);
 
   if (loading) return <div>Загрузка...</div>;
   if (error) return <div>{error}</div>;

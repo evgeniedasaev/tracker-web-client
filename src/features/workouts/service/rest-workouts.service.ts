@@ -4,12 +4,13 @@ import {
   WorkoutByIdResponse,
   workoutsResponseSchema,
   workoutByIdResponseSchema,
-} from '@/features/workouts/model/contracts';
+} from '@/features/workouts/service/contracts';
+import { mapWorkoutDto, mapWorkoutListDto } from '@/features/workouts/service/mappers';
 import {
   WorkoutsService,
   WorkoutsServiceResult,
   WorkoutByIdServiceResult,
-} from '@/features/workouts/model/service';
+} from '@/features/workouts/model/service.interface';
 import { mapUnknownResponseErrors } from '@/shared/api/rest/map-error-response';
 
 const mapListResponse = (response: {
@@ -23,7 +24,7 @@ const mapListResponse = (response: {
     'items' in response.data &&
     Array.isArray(response.data.items)
   ) {
-    return { ok: true, items: response.data.items } satisfies WorkoutsServiceResult;
+    return { ok: true, items: mapWorkoutListDto(response.data.items) } satisfies WorkoutsServiceResult;
   }
 
   return mapUnknownResponseErrors(response);
@@ -35,7 +36,7 @@ const mapGetByIdResponse = (response: {
   error?: string;
 }) => {
   if (response.ok && response.data && 'id' in response.data) {
-    return { ok: true, workout: response.data } satisfies WorkoutByIdServiceResult;
+    return { ok: true, workout: mapWorkoutDto(response.data) } satisfies WorkoutByIdServiceResult;
   }
 
   return mapUnknownResponseErrors(response);

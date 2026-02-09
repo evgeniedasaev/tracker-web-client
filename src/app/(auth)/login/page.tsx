@@ -1,5 +1,10 @@
-import { AuthForm } from '@/features/auth/ui/AuthForm';
-import { loginAction } from '@/features/auth/actions/login.action';
+import type { Metadata } from 'next';
+import { AuthForm, loginAction } from '@/features/auth';
+
+export const metadata: Metadata = {
+  title: 'Login | Traker',
+  description: 'Your workouts list',
+};
 
 export default function LoginPage() {
   return (

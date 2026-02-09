@@ -1,7 +1,8 @@
 'use client';
-import { Workout, WorkoutByIdState } from '@/features/workouts/model/view-model';
 import { useEffect, useState } from 'react';
 import { PencilSquareIcon, XCircleIcon } from '@heroicons/react/20/solid';
+import { Workout } from '@/features/workouts/model/types';
+import type { WorkoutByIdState } from '@/features/workouts/model/view-model';
 
 type WorkoutProps = {
   workoutId: string;
@@ -33,7 +34,7 @@ export function WorkoutFull({ workoutId, action }: WorkoutProps) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [action, workoutId]);
 
   if (loading) return <div>Загрузка...</div>;
   if (error) return <div>{error}</div>;

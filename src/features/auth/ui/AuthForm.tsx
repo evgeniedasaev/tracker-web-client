@@ -1,9 +1,9 @@
 'use client';
 
 import { useActionState, useEffect } from 'react';
-import { useFormStatus } from 'react-dom';
 import type { AuthState } from '@/features/auth/model/view-model';
 import { useToast } from '@/shared/ui/ToastProvider';
+import { SubmitButton } from '@/features/auth/ui/SubmitButton';
 
 type AuthFormProps = {
   title: string;
@@ -11,15 +11,6 @@ type AuthFormProps = {
   pendingLabel: string;
   action: (_state: AuthState, formData: FormData) => Promise<AuthState>;
 };
-
-function SubmitButton({ pendingLabel, cta }: { pendingLabel: string; cta: string }) {
-  const { pending } = useFormStatus();
-  return (
-    <button type="submit" className="btn btn-neutral mt-2" disabled={pending}>
-      {pending ? pendingLabel : cta}
-    </button>
-  );
-}
 
 export function AuthForm({ title, cta, pendingLabel, action }: AuthFormProps) {
   const [state, formAction] = useActionState(action, { success: false });

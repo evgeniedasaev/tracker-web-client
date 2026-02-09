@@ -1,6 +1,6 @@
-import { Workout } from '@/features/workouts/model/view-model';
-import { TrophyIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
+import { TrophyIcon } from '@heroicons/react/24/solid';
+import { Workout } from '@/features/workouts/model/types';
 
 type WorkoutProps = {
   workout: Workout;
