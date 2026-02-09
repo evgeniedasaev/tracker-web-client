@@ -10,6 +10,7 @@ export type NavigationItem = {
   label: string;
   href: string;
   icon: ComponentType<SVGProps<SVGSVGElement>>;
+  accentClassName?: string;
 };
 
 export type NavigationSection = {
@@ -27,6 +28,8 @@ export const navigationSections: NavigationSection[] = [
         label: 'Workouts',
         href: '/workouts',
         icon: TrophyIcon,
+        accentClassName:
+          'bg-gradient-to-br from-primary/20 via-primary/10 to-base-100 text-primary shadow-[0_8px_24px_-14px_rgba(99,102,241,0.6)]',
       },
       {
         key: 'profile',
