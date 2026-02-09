@@ -1,5 +1,5 @@
-import { AuthForm } from '@/features/auth/ui/AuthForm';
-import { loginAction } from '@/features/auth/actions/login.action';
+import { AuthForm } from '@/features/auth';
+import { loginAction } from '@/features/auth';
 
 export default function LoginPage() {
   return (

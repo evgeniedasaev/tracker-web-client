@@ -1,8 +1,8 @@
-import { WorkoutFull } from '@/features/workouts/ui/WorkoutFull';
-import { getByIdAction } from '@/features/workouts/actions/getById.action';
+import { WorkoutFull } from '@/features/workouts';
 
+// Note: in this project, Next passes `params` as a Promise.
 export default async function WorkoutPage({ params }: { params: Promise<{ workoutId: string }> }) {
   const { workoutId } = await params;
 
-  return <WorkoutFull workoutId={workoutId} action={getByIdAction} />;
+  return <WorkoutFull workoutId={workoutId} />;
 }

@@ -1,6 +1,5 @@
-import { WorkoutsList } from '@/features/workouts/ui/WorkoutsList';
-import { listAction } from '@/features/workouts/actions/list.action';
+import { WorkoutsList } from '@/features/workouts';
 
 export default function WorkoutsPage() {
-  return <WorkoutsList action={listAction} />;
+  return <WorkoutsList />;
 }

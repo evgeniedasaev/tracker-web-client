@@ -1,5 +1,5 @@
-import { AuthForm } from '@/features/auth/ui/AuthForm';
-import { signupAction } from '@/features/auth/actions/signup.action';
+import { AuthForm } from '@/features/auth';
+import { signupAction } from '@/features/auth';
 
 export default function SignUpPage() {
   return (

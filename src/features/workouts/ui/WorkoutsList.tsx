@@ -1,14 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { WorkoutItem } from '@/features/workouts/ui/WorkoutItem';
 import { Workout } from '@/features/workouts/model/types';
-import { WorkoutsListState } from '@/features/workouts/model/view-model';
+import { WorkoutItem } from '@/features/workouts/ui/WorkoutItem';
+import { listAction } from '@/features/workouts/actions/list.action';
 
-type WorkoutsListProps = {
-  action: (_state: WorkoutsListState) => Promise<WorkoutsListState>;
-};
-
-export function WorkoutsList({ action }: WorkoutsListProps) {
+export function WorkoutsList() {
   const [items, setItems] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +14,7 @@ export function WorkoutsList({ action }: WorkoutsListProps) {
 
     async function load() {
       try {
-        const res = await action({ success: false });
+        const res = await listAction({ success: false });
 
         if (!res.success) throw new Error('API error');
         if (!cancelled && res.items) setItems(res.items);
@@ -33,7 +29,7 @@ export function WorkoutsList({ action }: WorkoutsListProps) {
     return () => {
       cancelled = true;
     };
-  }, [action]);
+  }, [listAction]);
 
   if (loading) return <div>Загрузка...</div>;
   if (error) return <div>{error}</div>;
