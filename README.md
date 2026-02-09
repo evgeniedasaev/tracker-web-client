@@ -8,7 +8,8 @@ Next.js 16 app with server actions, TailwindCSS v4 + DaisyUI, typed REST API lay
   ToastProvider), плюс конфиг навигации (`src/app/navigation.config.ts`).
 - `src/features` — фичи (UI + server actions + use-cases + сервисы). Пример: `features/auth`.
 - `src/shared` — инфраструктура и общие блоки:
-    - `shared/api/rest` — `server-client.ts` (server-only, с refresh), `client.ts` (browser-safe), контракты и маппинг ошибок.
+    - `shared/api/rest` — `server-client.ts` (server-only, с refresh), `client.ts` (browser-safe), контракты и маппинг
+      ошибок.
     - `shared/auth/cookie/token.ts` — работа с HttpOnly кукой и refresh.
     - `shared/config` — `config.ts` (валидация env через zod, общие настройки).
     - `shared/lib` — вспомогательные библиотеки (logger с reporter/уровнями).
