@@ -1,16 +1,8 @@
 import { ServiceState } from '@/shared/model/view-model';
-
-export type Workout = {
-  id: string;
-  date: string;
-  title: string;
-  note?: string | null;
-  createdAt: string;
-  updatedAt: string;
-};
+import { Workout } from '@/features/workouts/model/types';
 
 export type WorkoutsListState = ServiceState<{
-  items?: Workout[] | [];
+  items?: Workout[];
 }>;
 
 export type WorkoutByIdState = ServiceState<{

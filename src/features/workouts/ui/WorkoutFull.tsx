@@ -1,7 +1,8 @@
 'use client';
-import { Workout, WorkoutByIdState } from '@/features/workouts/model/view-model';
 import { useEffect, useState } from 'react';
 import { PencilSquareIcon, XCircleIcon } from '@heroicons/react/20/solid';
+import { Workout } from '@/features/workouts/model/types';
+import { WorkoutByIdState } from '@/features/workouts/model/view-model';
 
 type WorkoutProps = {
   workoutId: string;

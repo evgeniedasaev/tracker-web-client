@@ -1,10 +1,11 @@
-import { WorkoutsListState, WorkoutByIdState } from '@/features/workouts/model/view-model';
-import { getWorkoutsService } from '@/features/workouts/model/service-registry';
 import { mapErrorServiceResultToState } from '@/shared/model/view-model';
+import { WorkoutsListState, WorkoutByIdState } from '@/features/workouts/model/view-model';
+import { WorkoutsService } from '@/features/workouts/model/service.interface';
 
-export function createListAction() {
+type UseCaseConfig = { workoutsService: WorkoutsService };
+
+export function createListAction({ workoutsService }: UseCaseConfig) {
   return async function listAction(_prevState: WorkoutsListState): Promise<WorkoutsListState> {
-    const workoutsService = getWorkoutsService();
     const result = await workoutsService.list();
 
     if (result.ok) {
@@ -18,12 +19,11 @@ export function createListAction() {
   };
 }
 
-export function createGetByIdAction() {
+export function createGetByIdAction({ workoutsService }: UseCaseConfig) {
   return async function getByIdAction(
     _prevState: WorkoutByIdState,
     workoutId: string,
   ): Promise<WorkoutByIdState> {
-    const workoutsService = getWorkoutsService();
     const result = await workoutsService.getById(workoutId);
 
     if (result.ok) {

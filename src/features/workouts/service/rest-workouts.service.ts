@@ -4,12 +4,12 @@ import {
   WorkoutByIdResponse,
   workoutsResponseSchema,
   workoutByIdResponseSchema,
-} from '@/features/workouts/model/contracts';
+} from '@/features/workouts/service/contracts';
 import {
   WorkoutsService,
   WorkoutsServiceResult,
   WorkoutByIdServiceResult,
-} from '@/features/workouts/model/service';
+} from '@/features/workouts/model/service.interface';
 import { mapUnknownResponseErrors } from '@/shared/api/rest/map-error-response';
 
 const mapListResponse = (response: {

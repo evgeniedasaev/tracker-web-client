@@ -1,7 +1,10 @@
 import { createGetByIdAction } from '@/features/workouts/model/use-cases';
 import { WorkoutByIdState } from '@/features/workouts/model/view-model';
+import { getWorkoutsService } from '@/features/workouts/service/registry';
 
-const getById = createGetByIdAction();
+const getById = createGetByIdAction({
+  workoutsService: getWorkoutsService(),
+});
 
 export async function getByIdAction(
   prevState: WorkoutByIdState,

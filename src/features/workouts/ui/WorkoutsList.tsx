@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Workout, WorkoutsListState } from '@/features/workouts/model/view-model';
 import { WorkoutItem } from '@/features/workouts/ui/WorkoutItem';
+import { Workout } from '@/features/workouts/model/types';
+import { WorkoutsListState } from '@/features/workouts/model/view-model';
 
 type WorkoutsListProps = {
   action: (_state: WorkoutsListState) => Promise<WorkoutsListState>;
