@@ -1,15 +1,9 @@
 import { ServiceResult } from '@/shared/model/view-model';
-import { Credentials, credentialsSchema } from '@/features/auth/model/contracts';
+import type { AuthCredentials, AuthSession } from '@/features/auth/model/types';
 
-export type AuthServiceResult = ServiceResult<{ accessToken: string }>;
+export type AuthServiceResult = ServiceResult<AuthSession>;
 
 export type AuthService = {
-  login(credentials: Credentials): Promise<AuthServiceResult>;
-  signup(credentials: Credentials): Promise<AuthServiceResult>;
+  login(credentials: AuthCredentials): Promise<AuthServiceResult>;
+  signup(credentials: AuthCredentials): Promise<AuthServiceResult>;
 };
-
-export const validateCredentials = (formData: FormData) =>
-  credentialsSchema.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-  });

@@ -1,10 +1,9 @@
 import { redirect } from 'next/navigation';
 import { setAccessToken } from '@/shared/api/token';
 import type { AuthState } from '@/features/auth/model/view-model';
-import { validateCredentials } from '@/features/auth/model/service';
 import { getAuthService } from '@/features/auth/model/service-registry';
-import { buildStateFromValidation, mapErrorServiceResultToState } from '@/shared/model/view-model';
-import type { Credentials } from '@/features/auth/model/contracts';
+import { mapErrorServiceResultToState } from '@/shared/model/view-model';
+import type { AuthCredentials } from '@/features/auth/model/types';
 
 type UseCaseConfig = {
   action: 'login' | 'signup';
@@ -12,11 +11,7 @@ type UseCaseConfig = {
 };
 
 export function createAuthAction({ action, defaultErrorMessage }: UseCaseConfig) {
-  return async function authAction(_prevState: AuthState, formData: FormData): Promise<AuthState> {
-    const parsed = validateCredentials(formData);
-    if (!parsed.success) return buildStateFromValidation<Credentials>(parsed.error);
-
-    const credentials = parsed.data;
+  return async function authAction(credentials: AuthCredentials): Promise<AuthState> {
     const authService = getAuthService();
     const result = await authService[action](credentials);
 
