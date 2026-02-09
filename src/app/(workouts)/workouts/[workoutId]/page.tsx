@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { ToastNotifier } from '@/shared/ui/toast';
 import { WorkoutFull, getByIdQuery } from '@/features/workouts';
+import { ProblemHero } from '@/shared/ui/pages';
 
 export const metadata: Metadata = {
   title: 'Workout Details | Traker',
@@ -13,14 +14,35 @@ export default async function WorkoutPage({ params }: { params: Promise<{ workou
   const result = await getByIdQuery(workoutId);
 
   if (!result.success) {
-    return <ToastNotifier type="error" message={result.message || 'Не удалость загрузить'} />;
+    const message = result.message || 'Somethig happened';
+    return (
+      <>
+        <ToastNotifier type="error" message={message} />
+        <ProblemHero
+          header="Something happened"
+          description={message}
+          link={{
+            url: '/',
+            text: 'Go home',
+          }}
+        />
+      </>
+    );
   }
 
   if (!result.workout) {
+    const message = 'Not found';
     return (
       <>
-        <ToastNotifier type="info" message="Тренировка не найдена" />
-        <div>Тренировка не найдена</div>
+        <ToastNotifier type="info" message={message} />
+        <ProblemHero
+          header="404"
+          description={message}
+          link={{
+            url: '/',
+            text: 'Go home',
+          }}
+        />
       </>
     );
   }

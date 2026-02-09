@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { ToastNotifier } from '@/shared/ui/toast';
 import { WorkoutsList, listQuery } from '@/features/workouts';
+import { ProblemHero } from '@/shared/ui/pages';
 
 export const metadata: Metadata = {
   title: 'Workouts | Traker',
@@ -11,14 +12,35 @@ export default async function WorkoutsPage() {
   const result = await listQuery();
 
   if (!result.success) {
-    return <ToastNotifier type="error" message={result.message || 'Не удалость загрузить'} />;
+    const message = result.message || 'Something happened';
+    return (
+      <>
+        <ToastNotifier type="error" message={message} />
+        <ProblemHero
+          header="Something happened"
+          description={message}
+          link={{
+            url: '/',
+            text: 'Go home',
+          }}
+        />
+      </>
+    );
   }
 
   if (!result.items) {
+    const message = 'Workouts list is empty';
     return (
       <>
-        <ToastNotifier type="info" message="Тренировок нет" />
-        <div>Тренировок нет</div>
+        <ToastNotifier type="info" message={message} />
+        <ProblemHero
+          header="404"
+          description={message}
+          link={{
+            url: '/',
+            text: 'Go home',
+          }}
+        />
       </>
     );
   }
