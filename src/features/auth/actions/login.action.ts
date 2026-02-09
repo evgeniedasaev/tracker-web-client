@@ -4,6 +4,7 @@ import type { AuthCredentials } from '@/features/auth/model/types';
 import { buildStateFromValidation } from '@/shared/model/view-model';
 import { validateCredentials } from '@/features/auth/actions/validate';
 import { getAuthService, getSessionService } from '@/features/auth/service/registry';
+import { redirect } from 'next/navigation';
 
 export type LoginState = AuthState;
 
@@ -18,5 +19,9 @@ export async function loginAction(prevState: AuthState, formData: FormData): Pro
   const parsed = validateCredentials(formData);
   if (!parsed.success) return buildStateFromValidation<AuthCredentials>(parsed.error);
 
-  return login(parsed.data);
+  const result = await login(parsed.data);
+
+  if (result.success) redirect('/workouts');
+
+  return result;
 }

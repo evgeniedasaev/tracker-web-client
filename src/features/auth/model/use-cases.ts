@@ -20,7 +20,7 @@ export function createAuthAction({
 
     if (result.ok) {
       await sessionService.setAccessToken(result.accessToken);
-      redirect('/workouts');
+      return { success: true };
     }
 
     return mapErrorServiceResultToState(result, defaultErrorMessage);
