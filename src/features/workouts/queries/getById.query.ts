@@ -7,10 +7,7 @@ const getByIdUseCase = createGetByIdUseCase({
   defaultErrorMessage: 'Workout not found',
 });
 
-export async function getByIdQuery(
-  prevState: WorkoutByIdState,
-  workoutId: string,
-): Promise<WorkoutByIdState> {
+export async function getByIdQuery(workoutId: string): Promise<WorkoutByIdState> {
   'use server';
-  return getByIdUseCase(prevState, workoutId);
+  return getByIdUseCase(workoutId);
 }

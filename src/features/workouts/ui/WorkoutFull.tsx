@@ -1,45 +1,11 @@
-'use client';
-import { useEffect, useState } from 'react';
 import { PencilSquareIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import { Workout } from '@/features/workouts/model/types';
-import type { WorkoutByIdState } from '@/features/workouts/model/view-model';
 
 type WorkoutProps = {
-  workoutId: string;
-  action: (_state: WorkoutByIdState, workoutId: string) => Promise<WorkoutByIdState>;
+  workout: Workout;
 };
 
-export function WorkoutFull({ workoutId, action }: WorkoutProps) {
-  const [workout, setWorkout] = useState<Workout | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      try {
-        const res = await action({ success: false }, workoutId);
-
-        if (!res.success) throw new Error('API error');
-        if (!cancelled && res.workout) setWorkout(res.workout);
-      } catch (e) {
-        if (!cancelled) setError('Не удалось загрузить');
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [action, workoutId]);
-
-  if (loading) return <div>Загрузка...</div>;
-  if (error) return <div>{error}</div>;
-  if (!workout) return <div>Не найдено</div>;
-
+export function WorkoutFull({ workout }: WorkoutProps) {
   return (
     <div>
       <div className="text-xl font-bold">{workout.title}</div>

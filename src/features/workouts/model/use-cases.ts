@@ -8,7 +8,7 @@ type UseCaseConfig = {
 };
 
 export function createListUseCase({ workoutsService, defaultErrorMessage }: UseCaseConfig) {
-  return async function listUseCase(_prevState: WorkoutsListState): Promise<WorkoutsListState> {
+  return async function listUseCase(): Promise<WorkoutsListState> {
     const result = await workoutsService.list();
 
     if (result.ok) {
@@ -23,10 +23,7 @@ export function createListUseCase({ workoutsService, defaultErrorMessage }: UseC
 }
 
 export function createGetByIdUseCase({ workoutsService, defaultErrorMessage }: UseCaseConfig) {
-  return async function getByIdUseCase(
-    _prevState: WorkoutByIdState,
-    workoutId: string,
-  ): Promise<WorkoutByIdState> {
+  return async function getByIdUseCase(workoutId: string): Promise<WorkoutByIdState> {
     const result = await workoutsService.getById(workoutId);
 
     if (result.ok) {

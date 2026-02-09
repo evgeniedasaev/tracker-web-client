@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { ToastProvider } from '@/shared/ui/ToastProvider';
+import { ToastProvider } from '@/shared/ui/toast';
 import { AppShell } from '@/shared/ui/layout';
 import { navigationSections } from '@/app/navigation.config';
 import './globals.css';

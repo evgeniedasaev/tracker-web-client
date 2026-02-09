@@ -7,7 +7,6 @@ const listUseCase = createListUseCase({
   defaultErrorMessage: 'Failed to load workouts',
 });
 
-export async function listQuery(prevState: WorkoutsListState): Promise<WorkoutsListState> {
-  'use server';
-  return listUseCase(prevState);
+export async function listQuery(): Promise<WorkoutsListState> {
+  return listUseCase();
 }

@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect } from 'react';
 import type { AuthState } from '@/features/auth/model/view-model';
-import { useToast } from '@/shared/ui/ToastProvider';
+import { useToast } from '@/shared/ui/toast';
 import { SubmitButton } from '@/features/auth/ui/SubmitButton';
 
 type AuthFormProps = {
