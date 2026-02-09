@@ -13,7 +13,7 @@ Next.js 16 app with server actions, TailwindCSS v4 + DaisyUI, typed REST API lay
     - `shared/auth/cookie/token.ts` — работа с HttpOnly кукой и refresh.
     - `shared/config` — `config.ts` (валидация env через zod, общие настройки).
     - `shared/lib` — вспомогательные библиотеки (logger с reporter/уровнями).
-    - `shared/ui` — общие клиентские блоки (ToastProvider) и layout/pages.
+    - `shared/ui` — общие клиентские блоки (ToastProvider, toast-конфиг/обработчики) и layout/pages.
 - `middleware.ts` — edge-guard для защищённых путей (`/app`, `/dashboard`), пытается refresh и ставит куку либо
   редиректит на `/login?redirectTo=...`.
 
@@ -51,6 +51,8 @@ Next.js 16 app with server actions, TailwindCSS v4 + DaisyUI, typed REST API lay
 
 - Базовые экраны ошибок: `src/app/global-error.tsx`, `src/app/not-found.tsx` (UI вынесен в `shared/ui/pages`).
 - Глобальные тосты: `src/shared/ui/ToastProvider.tsx` подключён в `src/app/layout.tsx`.
+- Тосты после редиректа: `ToastFromSearch` читает ключи из `src/shared/ui/toast/toast.config.ts` и показывает уведомление
+  по query-параметру `?toast=...`.
 - TailwindCSS v4 + DaisyUI. Шрифты Geist через `next/font`.
 
 ## Как расширять

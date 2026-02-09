@@ -1,39 +1,18 @@
 'use client';
 
-import { useActionState, useEffect, useMemo, useRef, useState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useActionState, useEffect } from 'react';
 import type { AuthState } from '@/features/auth/model/view-model';
 import { useToast } from '@/shared/ui/toast';
 import { SubmitButton } from '@/features/auth/ui/SubmitButton';
-import { credentialsSchema } from '@/features/auth/service/contracts';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/20/solid';
+import { useAuthForm } from '@/features/auth/ui/useAuthForm';
+import { useFormStatus } from 'react-dom';
 
 type AuthFormProps = {
   title: string;
   cta: string;
   pendingLabel: string;
   action: (_state: AuthState, formData: FormData) => Promise<AuthState>;
-};
-
-type AuthValues = {
-  email: string;
-  password: string;
-};
-
-type FieldErrors = Partial<Record<keyof AuthValues, string>>;
-
-const validateValues = (values: AuthValues): FieldErrors => {
-  const result = credentialsSchema.safeParse(values);
-  if (result.success) return {};
-
-  const fieldErrors = result.error.flatten().fieldErrors;
-  const email = fieldErrors.email?.[0];
-  const password = fieldErrors.password?.[0];
-
-  return {
-    email,
-    password,
-  };
 };
 
 function FormFields({
@@ -48,10 +27,10 @@ function FormFields({
   emailRef,
   passwordRef,
 }: {
-  values: AuthValues;
-  errors: FieldErrors;
-  onChange: (field: keyof AuthValues, value: string) => void;
-  onBlur: (field: keyof AuthValues) => void;
+  values: { email: string; password: string };
+  errors: { email?: string; password?: string };
+  onChange: (field: 'email' | 'password', value: string) => void;
+  onBlur: (field: 'email' | 'password') => void;
   showPassword: boolean;
   onTogglePassword: () => void;
   pendingLabel: string;
@@ -70,13 +49,10 @@ function FormFields({
         id="email"
         type="email"
         name="email"
-        value={values.email}
-        onChange={(event) => {
-          onChange('email', event.target.value);
-        }}
-        onBlur={() => {
-          onBlur('email');
-        }}
+        autoComplete="email"
+        onChange={(event) => onChange('email', event.target.value)}
+        onInput={(event) => onChange('email', event.currentTarget.value)}
+        onBlur={() => onBlur('email')}
         className={`input ${errors.email ? 'input-error' : ''}`}
         placeholder="you@example.com"
         required
@@ -89,13 +65,10 @@ function FormFields({
           id="password"
           type={showPassword ? 'text' : 'password'}
           name="password"
-          value={values.password}
-          onChange={(event) => {
-            onChange('password', event.target.value);
-          }}
-          onBlur={() => {
-            onBlur('password');
-          }}
+          autoComplete="current-password"
+          onChange={(event) => onChange('password', event.target.value)}
+          onInput={(event) => onChange('password', event.currentTarget.value)}
+          onBlur={() => onBlur('password')}
           className={`input join-item w-full ${errors.password ? 'input-error' : ''}`}
           placeholder="******"
           required
@@ -119,32 +92,19 @@ export function AuthForm({ title, cta, pendingLabel, action }: AuthFormProps) {
   const [state, formAction] = useActionState(action, { success: false });
   const { message, fieldErrors, success } = state;
   const { notify } = useToast();
-  const [values, setValues] = useState<AuthValues>({ email: '', password: '' });
-  const [touched, setTouched] = useState<Record<keyof AuthValues, boolean>>({
-    email: false,
-    password: false,
-  });
-  const [clientErrors, setClientErrors] = useState<FieldErrors>({});
-  const [serverErrors, setServerErrors] = useState<FieldErrors>({});
-  const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const emailRef = useRef<HTMLInputElement | null>(null);
-  const passwordRef = useRef<HTMLInputElement | null>(null);
-
-  const displayErrors = useMemo<FieldErrors>(() => {
-    const errors: FieldErrors = {};
-    const showClient = hasSubmitted || touched.email || touched.password;
-
-    if (showClient && clientErrors.email) errors.email = clientErrors.email;
-    if (showClient && clientErrors.password) errors.password = clientErrors.password;
-
-    if (hasSubmitted || Object.keys(serverErrors).length) {
-      errors.email = errors.email ?? serverErrors.email;
-      errors.password = errors.password ?? serverErrors.password;
-    }
-
-    return errors;
-  }, [clientErrors, serverErrors, touched, hasSubmitted]);
+  const {
+    values,
+    displayErrors,
+    showPassword,
+    emailRef,
+    passwordRef,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    togglePassword,
+    syncServerErrors,
+    shouldToastSuccess,
+  } = useAuthForm();
 
   useEffect(() => {
     if (!message) return;
@@ -152,46 +112,13 @@ export function AuthForm({ title, cta, pendingLabel, action }: AuthFormProps) {
   }, [message, notify, success]);
 
   useEffect(() => {
-    if (!success) return;
-    if (message) return;
+    if (!shouldToastSuccess(message, success)) return;
     notify('Success', 'success');
-  }, [message, notify, success]);
+  }, [message, notify, shouldToastSuccess, success]);
 
   useEffect(() => {
-    setServerErrors(fieldErrors ?? {});
-  }, [fieldErrors]);
-
-  useEffect(() => {
-    const id = window.setTimeout(() => {
-      setClientErrors(validateValues(values));
-    }, 250);
-    return () => {
-      clearTimeout(id);
-    };
-  }, [values]);
-
-  const handleChange = (field: keyof AuthValues, value: string) => {
-    setValues((prev) => ({ ...prev, [field]: value }));
-    setServerErrors((prev) => ({ ...prev, [field]: undefined }));
-  };
-
-  const handleBlur = (field: keyof AuthValues) => {
-    setTouched((prev) => ({ ...prev, [field]: true }));
-    setClientErrors(validateValues(values));
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    setHasSubmitted(true);
-    setTouched({ email: true, password: true });
-    const immediateErrors = validateValues(values);
-    setClientErrors(immediateErrors);
-
-    if (immediateErrors.email || immediateErrors.password) {
-      event.preventDefault();
-      if (immediateErrors.email) emailRef.current?.focus();
-      else if (immediateErrors.password) passwordRef.current?.focus();
-    }
-  };
+    syncServerErrors(fieldErrors);
+  }, [fieldErrors, syncServerErrors]);
 
   return (
     <div className="hero bg-base-200 min-h-screen">
@@ -207,9 +134,7 @@ export function AuthForm({ title, cta, pendingLabel, action }: AuthFormProps) {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 showPassword={showPassword}
-                onTogglePassword={() => {
-                  setShowPassword((prev) => !prev);
-                }}
+                onTogglePassword={togglePassword}
                 pendingLabel={pendingLabel}
                 cta={cta}
                 emailRef={emailRef}

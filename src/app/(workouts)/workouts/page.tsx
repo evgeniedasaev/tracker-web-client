@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ToastNotifier } from '@/shared/ui/toast';
+import { ToastFromSearch, ToastNotifier } from '@/shared/ui/toast';
 import { WorkoutsList, listQuery } from '@/features/workouts';
 import { ProblemHero } from '@/shared/ui/pages';
 
@@ -15,6 +15,7 @@ export default async function WorkoutsPage() {
     const message = result.message || 'Something happened';
     return (
       <>
+        <ToastFromSearch />
         <ToastNotifier type="error" message={message} />
         <ProblemHero
           header="Something happened"
@@ -32,6 +33,7 @@ export default async function WorkoutsPage() {
     const message = 'Workouts list is empty';
     return (
       <>
+        <ToastFromSearch />
         <ToastNotifier type="info" message={message} />
         <ProblemHero
           header="404"
@@ -45,5 +47,10 @@ export default async function WorkoutsPage() {
     );
   }
 
-  return <WorkoutsList items={result.items} />;
+  return (
+    <>
+      <ToastFromSearch />
+      <WorkoutsList items={result.items} />
+    </>
+  );
 }

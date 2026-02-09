@@ -5,6 +5,7 @@ import { buildStateFromValidation } from '@/shared/model/view-model';
 import { validateCredentials } from '@/features/auth/actions/validate';
 import { getAuthService, getSessionService } from '@/features/auth/service/registry';
 import { redirect } from 'next/navigation';
+import { TOAST_KEYS } from '@/shared/ui/toast';
 
 export type SignupState = AuthState;
 
@@ -21,7 +22,7 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
 
   const result = await signUpUseCase(parsed.data);
 
-  if (result.success) redirect('/workouts');
+  if (result.success) redirect(`/workouts?toast=${TOAST_KEYS.auth_signup_success}`);
 
   return result;
 }
