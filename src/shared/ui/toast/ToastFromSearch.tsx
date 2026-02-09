@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/shared/ui/toast/useToast';
-import { toastMap } from '@/shared/ui/toast/toast.config';
+import { toastMap, type ToastKey } from '@/shared/ui/toast/toast.config';
 
 export function ToastFromSearch() {
   const searchParams = useSearchParams();
@@ -17,7 +17,8 @@ export function ToastFromSearch() {
     if (!toastKey || handledRef.current) return;
     handledRef.current = true;
 
-    const toastConfig = toastMap[toastKey];
+    const toastConfig =
+      toastKey in toastMap ? toastMap[toastKey as ToastKey] : undefined;
     if (toastConfig) {
       notify(toastConfig.message, toastConfig.type);
     }
