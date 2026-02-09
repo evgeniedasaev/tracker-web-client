@@ -10,7 +10,7 @@ import {
   ArrowRightEndOnRectangleIcon,
   UserCircleIcon,
   BoltIcon,
-} from '@heroicons/react/16/solid';
+} from '@heroicons/react/20/solid';
 
 export const metadata: Metadata = {
   title: {
