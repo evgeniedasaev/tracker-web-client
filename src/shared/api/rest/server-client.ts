@@ -10,6 +10,7 @@ type ApiRequestOptions<TResponse> = {
   body?: unknown;
   auth?: 'public' | 'required';
   schema?: z.ZodType<TResponse>;
+  refresh?: boolean;
 };
 
 export type ApiResult<T> = {
@@ -64,7 +65,7 @@ const withJsonBody = (body?: unknown) => (body ? JSON.stringify(body) : undefine
 export async function apiRequest<TResponse>(
   options: ApiRequestOptions<TResponse>,
 ): Promise<ApiResult<TResponse>> {
-  const { path, method = 'GET', body, auth = 'public', schema } = options;
+  const { path, method = 'GET', body, auth = 'public', schema, refresh = false } = options;
   const apiUrl = `${config.apiBaseUrl}${path}`;
 
   const token = auth === 'required' ? await getAccessToken() : null;
@@ -77,7 +78,7 @@ export async function apiRequest<TResponse>(
     logger.error('API request failed', { error, path, method });
     return { ok: false, status: 0, data: null, error: 'Fetch failed' };
   }
-  if (firstRes.status === 401 && auth === 'required') {
+  if (firstRes.status === 401 && auth === 'required' && refresh) {
     const refreshedToken = await refreshAccessToken();
     if (!refreshedToken) {
       return { ok: false, status: firstRes.status, data: null, error: 'Unauthorized' };
