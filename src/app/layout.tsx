@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ToastProvider } from '@/shared/ui/ToastProvider';
 import { AppShell } from '@/shared/ui/layout';
+import { navigationSections } from '@/app/navigation.config';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -27,7 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ToastProvider>
-          <AppShell>{children}</AppShell>
+          <AppShell navigationSections={navigationSections}>{children}</AppShell>
         </ToastProvider>
       </body>
     </html>

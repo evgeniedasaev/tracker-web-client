@@ -5,12 +5,14 @@ import {
   BoltIcon,
 } from '@heroicons/react/20/solid';
 import { Navigation } from '@/shared/ui/layout/Navigation';
+import type { NavigationSection } from '@/app/navigation.config';
 
 type AppShellProps = {
   children: React.ReactNode;
+  navigationSections: NavigationSection[];
 };
 
-export function AppShell({ children }: AppShellProps) {
+export function AppShell({ children, navigationSections }: AppShellProps) {
   return (
     <div className="drawer">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
@@ -32,7 +34,7 @@ export function AppShell({ children }: AppShellProps) {
             </Link>
           </div>
           <div className="hidden flex-none lg:block">
-            <Navigation className="menu menu-horizontal" />
+            <Navigation className="menu menu-horizontal" sections={navigationSections} />
           </div>
         </div>
         {children}
@@ -41,7 +43,7 @@ export function AppShell({ children }: AppShellProps) {
         <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay">
           <XCircleIcon className="inline-block h-6 w-6 stroke-current" />
         </label>
-        <Navigation className="menu bg-base-200 min-h-full w-80 p-4" />
+        <Navigation className="menu bg-base-200 min-h-full w-80 p-4" sections={navigationSections} />
       </div>
     </div>
   );
