@@ -2,9 +2,13 @@
 import { useState, useEffect } from 'react';
 import { Workout } from '@/features/workouts/model/types';
 import { WorkoutItem } from '@/features/workouts/ui/WorkoutItem';
-import { listAction } from '@/features/workouts/actions/list.action';
+import type { WorkoutsListState } from '@/features/workouts/model/view-model';
 
-export function WorkoutsList() {
+type WorkoutsListProps = {
+  action: (_state: WorkoutsListState) => Promise<WorkoutsListState>;
+};
+
+export function WorkoutsList({ action }: WorkoutsListProps) {
   const [items, setItems] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -14,7 +18,7 @@ export function WorkoutsList() {
 
     async function load() {
       try {
-        const res = await listAction({ success: false });
+        const res = await action({ success: false });
 
         if (!res.success) throw new Error('API error');
         if (!cancelled && res.items) setItems(res.items);
@@ -29,7 +33,7 @@ export function WorkoutsList() {
     return () => {
       cancelled = true;
     };
-  }, [listAction]);
+  }, [action]);
 
   if (loading) return <div>Загрузка...</div>;
   if (error) return <div>{error}</div>;

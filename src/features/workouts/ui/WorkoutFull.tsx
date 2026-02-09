@@ -2,13 +2,14 @@
 import { useEffect, useState } from 'react';
 import { PencilSquareIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import { Workout } from '@/features/workouts/model/types';
-import { getByIdAction } from '@/features/workouts/actions/getById.action';
+import type { WorkoutByIdState } from '@/features/workouts/model/view-model';
 
 type WorkoutProps = {
   workoutId: string;
+  action: (_state: WorkoutByIdState, workoutId: string) => Promise<WorkoutByIdState>;
 };
 
-export function WorkoutFull({ workoutId }: WorkoutProps) {
+export function WorkoutFull({ workoutId, action }: WorkoutProps) {
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +19,7 @@ export function WorkoutFull({ workoutId }: WorkoutProps) {
 
     async function load() {
       try {
-        const res = await getByIdAction({ success: false }, workoutId);
+        const res = await action({ success: false }, workoutId);
 
         if (!res.success) throw new Error('API error');
         if (!cancelled && res.workout) setWorkout(res.workout);
@@ -33,7 +34,7 @@ export function WorkoutFull({ workoutId }: WorkoutProps) {
     return () => {
       cancelled = true;
     };
-  }, [getByIdAction, workoutId]);
+  }, [action, workoutId]);
 
   if (loading) return <div>Загрузка...</div>;
   if (error) return <div>{error}</div>;
