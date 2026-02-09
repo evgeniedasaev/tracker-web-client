@@ -1,6 +1,6 @@
 import { WorkoutsListState, WorkoutByIdState } from '@/features/workouts/model/view-model';
 import { getWorkoutsService } from '@/features/workouts/model/service-registry';
-import { mapErrorServiceResultToState } from '@/shared/lib/view-model.helpers';
+import { mapErrorServiceResultToState } from '@/shared/model/view-model';
 
 export function createListAction() {
   return async function listAction(_prevState: WorkoutsListState): Promise<WorkoutsListState> {

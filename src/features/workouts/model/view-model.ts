@@ -1,4 +1,4 @@
-import { ServiceState } from '@/shared/lib/view-model.helpers';
+import { ServiceState } from '@/shared/model/view-model';
 
 export type Workout = {
   id: string;

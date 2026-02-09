@@ -1,4 +1,4 @@
-import { ServiceResult } from '@/shared/lib/view-model.helpers';
+import { ServiceResult } from '@/shared/model/view-model';
 import { Workout } from '@/features/workouts/model/view-model';
 
 export type WorkoutsServiceResult = ServiceResult<{ items: Workout[] }>;

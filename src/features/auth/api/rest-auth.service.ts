@@ -1,26 +1,14 @@
 import { apiRequest } from '@/shared/api/client';
-import {
-  AuthResponse,
-  authResponseSchema,
-  Credentials,
-  AuthFieldErrors,
-} from '@/features/auth/model/contracts';
+import { AuthResponse, authResponseSchema, Credentials } from '@/features/auth/model/contracts';
 import { AuthService, AuthServiceResult } from '@/features/auth/model/service';
+import { mapUnknownResponseErrors } from '@/shared/api/map-error-response';
 
 const mapResponse = (response: { ok: boolean; data: AuthResponse | null; error?: string }) => {
   if (response.ok && response.data && 'accessToken' in response.data) {
     return { ok: true, accessToken: response.data.accessToken } satisfies AuthServiceResult;
   }
 
-  const details =
-    response.data && 'details' in response.data
-      ? (response.data.details as AuthFieldErrors | undefined)
-      : undefined;
-  return {
-    ok: false,
-    message: response.data?.message || response.error,
-    fieldErrors: details,
-  } satisfies AuthServiceResult;
+  return mapUnknownResponseErrors(response) satisfies AuthServiceResult;
 };
 
 export const restAuthService: AuthService = {

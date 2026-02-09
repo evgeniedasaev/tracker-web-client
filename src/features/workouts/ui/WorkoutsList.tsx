@@ -17,7 +17,7 @@ export function WorkoutsList({ action }: WorkoutsListProps) {
 
     async function load() {
       try {
-        const res = await action({ items: [], success: false });
+        const res = await action({ success: false });
 
         if (!res.success) throw new Error('API error');
         if (!cancelled && res.items) setItems(res.items);

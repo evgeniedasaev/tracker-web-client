@@ -10,18 +10,7 @@ import {
   WorkoutsServiceResult,
   WorkoutByIdServiceResult,
 } from '@/features/workouts/model/service';
-
-const mapResponseErrors = (response: {
-  ok: boolean;
-  data: WorkoutsResponse | null;
-  error?: string;
-}) => {
-  return {
-    ok: false,
-    message: response.data ? response.data?.message : response.error,
-    fieldErrors: response.data && 'details' in response.data ? response.data.details : undefined,
-  } satisfies WorkoutsServiceResult;
-};
+import { mapUnknownResponseErrors } from '@/shared/api/map-error-response';
 
 const mapListResponse = (response: {
   ok: boolean;
@@ -37,7 +26,7 @@ const mapListResponse = (response: {
     return { ok: true, items: response.data.items } satisfies WorkoutsServiceResult;
   }
 
-  return mapResponseErrors(response);
+  return mapUnknownResponseErrors(response);
 };
 
 const mapGetByIdResponse = (response: {
@@ -45,11 +34,11 @@ const mapGetByIdResponse = (response: {
   data: WorkoutByIdResponse | null;
   error?: string;
 }) => {
-  if (response.ok && response.data) {
+  if (response.ok && response.data && 'id' in response.data) {
     return { ok: true, workout: response.data } satisfies WorkoutByIdServiceResult;
   }
 
-  return mapResponseErrors(response);
+  return mapUnknownResponseErrors(response);
 };
 
 export const restWorkoutsService: WorkoutsService = {

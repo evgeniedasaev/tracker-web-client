@@ -18,7 +18,7 @@ export function WorkoutFull({ workoutId, action }: WorkoutProps) {
 
     async function load() {
       try {
-        const res = await action({ workout: null, success: false }, workoutId);
+        const res = await action({ success: false }, workoutId);
 
         if (!res.success) throw new Error('API error');
         if (!cancelled && res.workout) setWorkout(res.workout);

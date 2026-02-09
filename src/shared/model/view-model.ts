@@ -7,13 +7,16 @@ export type ErrorServiceResult = { ok: false; message?: string; fieldErrors?: Fi
 
 export type ServiceResult<T> = ({ ok: true } & T) | ErrorServiceResult;
 
-export type ErrorServiceState = {
-  success: boolean;
+export type CommonServiceState = {
   message?: string;
   fieldErrors?: FieldErrorsState;
 };
 
-export type ServiceState<T> = (T & ErrorServiceState) | ErrorServiceState;
+export type ErrorServiceState = CommonServiceState & {
+  success: false;
+};
+
+export type ServiceState<T> = ({ success: true } & T & CommonServiceState) | ErrorServiceState;
 
 type ErrorTree =
   | {

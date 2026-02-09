@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { apiErrorSchema } from '@/shared/api/contracts';
 
 const emailSchema = z
   .string()
@@ -16,14 +17,7 @@ export const authSuccessSchema = z.object({
   message: z.string().optional(),
 });
 
-export const authErrorSchema = z.object({
-  success: z.boolean().optional(),
-  message: z.string().optional(),
-  code: z.string().optional(),
-  details: z.record(z.string(), z.array(z.string())).optional(),
-});
-
-export const authResponseSchema = z.union([authSuccessSchema, authErrorSchema]);
+export const authResponseSchema = z.union([authSuccessSchema, apiErrorSchema]);
 
 export type Credentials = z.infer<typeof credentialsSchema>;
 export type AuthResponse = z.infer<typeof authResponseSchema>;

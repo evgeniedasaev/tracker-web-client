@@ -3,7 +3,7 @@ import { setAccessToken } from '@/shared/api/token';
 import type { AuthState } from '@/features/auth/model/view-model';
 import { validateCredentials } from '@/features/auth/model/service';
 import { getAuthService } from '@/features/auth/model/service-registry';
-import { buildStateFromValidation, mapErrorServiceResultToState } from '@/shared/lib/view-model.helpers';
+import { buildStateFromValidation, mapErrorServiceResultToState } from '@/shared/model/view-model';
 import type { Credentials } from '@/features/auth/model/contracts';
 
 type UseCaseConfig = {

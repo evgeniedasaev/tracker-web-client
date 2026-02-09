@@ -1,4 +1,4 @@
-import { ServiceResult } from '@/shared/lib/view-model.helpers';
+import { ServiceResult } from '@/shared/model/view-model';
 import { Credentials, credentialsSchema } from '@/features/auth/model/contracts';
 
 export type AuthServiceResult = ServiceResult<{ accessToken: string }>;
