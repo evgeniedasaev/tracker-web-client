@@ -10,4 +10,5 @@ export type AuthService = {
 
 export type SessionService = {
   setAccessToken(accessToken: string): Promise<void>;
+  isAuthenticated(): Promise<boolean>;
 };

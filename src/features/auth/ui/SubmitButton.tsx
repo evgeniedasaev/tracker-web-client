@@ -8,8 +8,19 @@ type SubmitButtonProps = {
 export function SubmitButton({ pendingLabel, cta }: SubmitButtonProps) {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" className="btn btn-neutral mt-2" disabled={pending}>
-      {pending ? pendingLabel : cta}
+    <button
+      type="submit"
+      className="btn btn-primary mt-4 w-full shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl"
+      disabled={pending}
+    >
+      {pending ? (
+        <>
+          <span className="loading loading-spinner loading-sm" />
+          {pendingLabel}
+        </>
+      ) : (
+        cta
+      )}
     </button>
   );
 }

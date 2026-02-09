@@ -10,12 +10,12 @@ type UseCaseConfig = {
   defaultErrorMessage?: string;
 };
 
-export function createLoginAction({
+export function createLoginUseCase({
   authService,
   sessionService,
   defaultErrorMessage,
 }: UseCaseConfig) {
-  return async function loginAction(credentials: AuthCredentials): Promise<AuthState> {
+  return async function loginUseCase(credentials: AuthCredentials): Promise<AuthState> {
     const result = await authService.login(credentials);
 
     if (result.ok) {
@@ -27,7 +27,7 @@ export function createLoginAction({
   };
 }
 
-export function createSignUpAction({
+export function createSignUpUseCase({
   authService,
   sessionService,
   defaultErrorMessage,

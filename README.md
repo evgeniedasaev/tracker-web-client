@@ -5,14 +5,15 @@ Next.js 16 app with server actions, TailwindCSS v4 + DaisyUI, typed REST API lay
 ## Структура
 
 - `src/app` — маршруты и страницы, подключающие готовые фичи (`global-error.tsx`, `not-found.tsx`, layout с
-  ToastProvider).
+  ToastProvider), плюс конфиг навигации (`src/app/navigation.config.ts`).
 - `src/features` — фичи (UI + server actions + use-cases + сервисы). Пример: `features/auth`.
 - `src/shared` — инфраструктура и общие блоки:
-    - `shared/api/rest` — `server-client.ts` (server-only, с refresh), `client.ts` (browser-safe), контракты и маппинг ошибок.
-    - `shared/api/cookie-token.ts` — работа с HttpOnly кукой и refresh.
+    - `shared/api/rest` — `server-client.ts` (server-only, с refresh), `client.ts` (browser-safe), контракты и маппинг
+      ошибок.
+    - `shared/auth/cookie/token.ts` — работа с HttpOnly кукой и refresh.
     - `shared/config` — `config.ts` (валидация env через zod, общие настройки).
     - `shared/lib` — вспомогательные библиотеки (logger с reporter/уровнями).
-    - `shared/ui` — общие клиентские блоки (ToastProvider).
+    - `shared/ui` — общие клиентские блоки (ToastProvider, toast-конфиг/обработчики) и layout/pages.
 - `middleware.ts` — edge-guard для защищённых путей (`/app`, `/dashboard`), пытается refresh и ставит куку либо
   редиректит на `/login?redirectTo=...`.
 
@@ -41,15 +42,17 @@ Next.js 16 app with server actions, TailwindCSS v4 + DaisyUI, typed REST API lay
   `cache: 'no-store'`, нормализация ошибок, zod-валидация ответов, refresh по `401`).
 - Browser-side запросы идут через `src/shared/api/rest/client.ts` (без refresh и без работы с cookie-токеном).
 - Аутентификация: use-cases в `features/auth/model/use-cases.ts` получают `AuthService` и `SessionService` через DI из
-  `features/auth/service/registry.ts`. Сессия ставится через `shared/api/cookie-token.ts`.
+  `features/auth/service/registry.ts`. Сессия ставится через `shared/auth/cookie/token.ts`.
 - Валидация входных/выходных данных рядом с эндпоинтами (zod-схемы в `features/auth/service/contracts.ts`).
 - Транспорт можно заменить: реализуйте `AuthService` и укажите `AUTH_TRANSPORT` в env, либо поменяйте привязку в
   `features/auth/service/registry.ts`. Для сессии аналогично — через `SESSION_TRANSPORT`.
 
 ## UI/UX
 
-- Базовые экраны ошибок: `src/app/global-error.tsx`, `src/app/not-found.tsx`.
+- Базовые экраны ошибок: `src/app/global-error.tsx`, `src/app/not-found.tsx` (UI вынесен в `shared/ui/pages`).
 - Глобальные тосты: `src/shared/ui/ToastProvider.tsx` подключён в `src/app/layout.tsx`.
+- Тосты после редиректа: `ToastFromSearch` читает ключи из `src/shared/ui/toast/toast.config.ts` и показывает уведомление
+  по query-параметру `?toast=...`.
 - TailwindCSS v4 + DaisyUI. Шрифты Geist через `next/font`.
 
 ## Как расширять
@@ -59,7 +62,7 @@ Next.js 16 app with server actions, TailwindCSS v4 + DaisyUI, typed REST API lay
   `shared/api/rest/server-client.ts` (server) или `shared/api/rest/client.ts` (browser) для типобезопасности.
 - Общие утилиты и конфиг — в `src/shared`.
 - Auth/Server actions: Next 16 требует async-работы с cookies — в server actions всегда `await` функции из
-  `shared/api/token.ts` (они сами делают `await cookies()`). Ошибки показываются тостами (ToastProvider, позиция
+  `shared/auth/cookie/token.ts` (они сами делают `await cookies()`). Ошибки показываются тостами (ToastProvider, позиция
   top-right).
 
 ## Как добавить новый роут, фичу и сущность

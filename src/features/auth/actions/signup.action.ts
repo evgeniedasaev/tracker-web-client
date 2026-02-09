@@ -1,14 +1,15 @@
-import { createSignUpAction } from '@/features/auth/model/use-cases';
+import { createSignUpUseCase } from '@/features/auth/model/use-cases';
 import type { AuthState } from '@/features/auth/model/view-model';
 import type { AuthCredentials } from '@/features/auth/model/types';
 import { buildStateFromValidation } from '@/shared/model/view-model';
 import { validateCredentials } from '@/features/auth/actions/validate';
 import { getAuthService, getSessionService } from '@/features/auth/service/registry';
 import { redirect } from 'next/navigation';
+import { TOAST_KEYS } from '@/shared/ui/toast';
 
 export type SignupState = AuthState;
 
-const signup = createSignUpAction({
+const signUpUseCase = createSignUpUseCase({
   authService: getAuthService(),
   sessionService: getSessionService(),
   defaultErrorMessage: 'Registration failed',
@@ -19,9 +20,9 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
   const parsed = validateCredentials(formData);
   if (!parsed.success) return buildStateFromValidation<AuthCredentials>(parsed.error);
 
-  const result = await signup(parsed.data);
+  const result = await signUpUseCase(parsed.data);
 
-  if (result.success) redirect('/workouts');
+  if (result.success) redirect(`/workouts?toast=${TOAST_KEYS.auth_signup_success}`);
 
   return result;
 }
