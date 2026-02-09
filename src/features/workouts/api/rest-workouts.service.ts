@@ -1,4 +1,4 @@
-import { apiRequest } from '@/shared/api/client';
+import { apiRequest } from '@/shared/api/rest/server-client';
 import {
   WorkoutsResponse,
   WorkoutByIdResponse,
@@ -10,7 +10,7 @@ import {
   WorkoutsServiceResult,
   WorkoutByIdServiceResult,
 } from '@/features/workouts/model/service';
-import { mapUnknownResponseErrors } from '@/shared/api/map-error-response';
+import { mapUnknownResponseErrors } from '@/shared/api/rest/map-error-response';
 
 const mapListResponse = (response: {
   ok: boolean;

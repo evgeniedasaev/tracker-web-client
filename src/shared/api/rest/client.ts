@@ -1,13 +1,11 @@
 import { z } from 'zod';
 import { config } from '@/shared/config/config';
-import { getAccessToken, refreshAccessToken, setAccessToken } from '@/shared/api/token';
 import { logger } from '@/shared/lib/logger';
 
 type ApiRequestOptions<TResponse> = {
   path: string;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
-  auth?: 'public' | 'required';
   schema?: z.ZodType<TResponse>;
 };
 
@@ -41,13 +39,10 @@ const parseResponse = async <T>(res: Response): Promise<Omit<ApiResult<T>, 'ok' 
   return { data: bodyText as T, error: res.ok ? undefined : res.statusText };
 };
 
-const buildHeaders = (init: RequestInit, token?: string) => {
+const buildHeaders = (init: RequestInit) => {
   const headers = new Headers(init.headers);
   headers.set('accept', 'application/json');
   headers.set('Content-Type', 'application/json');
-
-  if (token) headers.set('Authorization', `Bearer ${token}`);
-
   return headers;
 };
 
@@ -63,59 +58,22 @@ const withJsonBody = (body?: unknown) => (body ? JSON.stringify(body) : undefine
 export async function apiRequest<TResponse>(
   options: ApiRequestOptions<TResponse>,
 ): Promise<ApiResult<TResponse>> {
-  const { path, method = 'GET', body, auth = 'public', schema } = options;
+  const { path, method = 'GET', body, schema } = options;
   const apiUrl = `${config.apiBaseUrl}${path}`;
 
-  const token = auth === 'required' ? await getAccessToken() : null;
-  const headers = buildHeaders({}, token ?? undefined);
-
-  const firstRes = await performRequest(apiUrl, { method, headers, body: withJsonBody(body) });
-  if (firstRes.status === 401 && auth === 'required') {
-    const refreshedToken = await refreshAccessToken();
-    if (!refreshedToken) {
-      return { ok: false, status: firstRes.status, data: null, error: 'Unauthorized' };
-    }
-
-    headers.set('Authorization', `Bearer ${refreshedToken}`);
-    const retryRes = await performRequest(apiUrl, { method, headers, body: withJsonBody(body) });
-    const parsedRetry = await parseResponse<TResponse>(retryRes);
-
-    if (retryRes.ok && refreshedToken) await setAccessToken(refreshedToken);
-
-    if (schema) {
-      const safeData = schema.safeParse(parsedRetry.data);
-      if (!safeData.success) {
-        logger.error('Response schema validation failed', z.treeifyError(safeData.error));
-        return { ok: false, status: retryRes.status, data: null, error: 'Invalid response format' };
-      }
-
-      return {
-        ok: retryRes.ok,
-        status: retryRes.status,
-        data: safeData.data,
-        error: parsedRetry.error,
-      };
-    }
-
-    return {
-      ok: retryRes.ok,
-      status: retryRes.status,
-      data: parsedRetry.data,
-      error: parsedRetry.error,
-    };
-  }
-
-  const parsed = await parseResponse<TResponse>(firstRes);
+  const headers = buildHeaders({});
+  const res = await performRequest(apiUrl, { method, headers, body: withJsonBody(body) });
+  const parsed = await parseResponse<TResponse>(res);
 
   if (schema) {
     const safeData = schema.safeParse(parsed.data);
     if (!safeData.success) {
       logger.error('Response schema validation failed', z.treeifyError(safeData.error));
-      return { ok: false, status: firstRes.status, data: null, error: 'Invalid response format' };
+      return { ok: false, status: res.status, data: null, error: 'Invalid response format' };
     }
 
-    return { ok: firstRes.ok, status: firstRes.status, data: safeData.data, error: parsed.error };
+    return { ok: res.ok, status: res.status, data: safeData.data, error: parsed.error };
   }
 
-  return { ok: firstRes.ok, status: firstRes.status, data: parsed.data, error: parsed.error };
+  return { ok: res.ok, status: res.status, data: parsed.data, error: parsed.error };
 }

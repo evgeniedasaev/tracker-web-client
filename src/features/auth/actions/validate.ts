@@ -1,4 +1,4 @@
-import { credentialsSchema } from '@/features/auth/api/contracts';
+import { credentialsSchema } from '@/features/auth/service/contracts';
 
 export const validateCredentials = (formData: FormData) =>
   credentialsSchema.safeParse({

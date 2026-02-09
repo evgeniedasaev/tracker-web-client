@@ -3,11 +3,13 @@ import type { AuthState } from '@/features/auth/model/view-model';
 import type { AuthCredentials } from '@/features/auth/model/types';
 import { buildStateFromValidation } from '@/shared/model/view-model';
 import { validateCredentials } from '@/features/auth/actions/validate';
+import { getAuthService, getSessionService } from '@/features/auth/service/registry';
 
 export type SignupState = AuthState;
 
 const signup = createAuthAction({
-  action: 'signup',
+  authServiceMethod: getAuthService().signup,
+  sessionService: getSessionService(),
   defaultErrorMessage: 'Registration failed',
 });
 

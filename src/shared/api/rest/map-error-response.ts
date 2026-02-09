@@ -1,4 +1,4 @@
-import { apiErrorSchema, ApiError } from '@/shared/api/contracts';
+import { apiErrorSchema, ApiError } from '@/shared/api/rest/contracts';
 import { ErrorServiceResult } from '@/shared/model/view-model';
 
 type ApiResponseLike = {

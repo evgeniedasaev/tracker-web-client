@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { apiErrorSchema } from '@/shared/api/contracts';
+import { apiErrorSchema } from '@/shared/api/rest/contracts';
 import type { AuthCredentials } from '@/features/auth/model/types';
 
 const emailSchema = z

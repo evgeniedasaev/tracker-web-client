@@ -1,15 +1,15 @@
 # Tracker Web Client
 
-Next.js 16 app with server actions, TailwindCSS v4 + DaisyUI, typed API layer, and auth via HttpOnly cookies.
+Next.js 16 app with server actions, TailwindCSS v4 + DaisyUI, typed REST API layer, and auth via HttpOnly cookies.
 
 ## Структура
 
 - `src/app` — маршруты и страницы, подключающие готовые фичи (`global-error.tsx`, `not-found.tsx`, layout с
   ToastProvider).
-- `src/features` — фичи (UI + server actions + схемы для конкретной задачи). Пример: `features/auth`.
-- `src/entities` — доменные типы/модели, переиспользуемые между фичами. Пример: `entities/auth`.
+- `src/features` — фичи (UI + server actions + use-cases + сервисы). Пример: `features/auth`.
 - `src/shared` — инфраструктура и общие блоки:
-    - `shared/api` — `client.ts` (единый apiClient с retry/refresh), `token.ts` (HttpOnly кука).
+    - `shared/api/rest` — `server-client.ts` (server-only, с refresh), `client.ts` (browser-safe), контракты и маппинг ошибок.
+    - `shared/api/cookie-token.ts` — работа с HttpOnly кукой и refresh.
     - `shared/config` — `config.ts` (валидация env через zod, общие настройки).
     - `shared/lib` — вспомогательные библиотеки (logger с reporter/уровнями).
     - `shared/ui` — общие клиентские блоки (ToastProvider).
@@ -31,18 +31,20 @@ Next.js 16 app with server actions, TailwindCSS v4 + DaisyUI, typed API layer, a
 3. Env: создать `.env.local` и задать переменные:
     - `NEXT_PUBLIC_API_URL` — базовый URL backend API (используется на сервере и клиенте).
     - `AUTH_TRANSPORT` — `rest` (по умолчанию), для переключения транспорта фич auth.
+    - `SESSION_TRANSPORT` — `cookie` (по умолчанию), для переключения слоя сессии.
+    - `WORKOUTS_TRANSPORT` — `rest` (по умолчанию), для переключения транспорта фич workouts.
     - `LOG_LEVEL` или `NEXT_PUBLIC_LOG_LEVEL` — `debug` | `info` | `warn` | `error`.
 
 ## Архитектура API/Auth
 
-- Запросы идут через `src/shared/api/client.ts` (baseURL, `credentials: 'include'`, `cache: 'no-store'`, нормализация
-  ошибок, zod-валидация ответов).
-- Аутентификация: use-cases в `features/auth/model/use-cases.ts` вызывают сервис через реестр (`service-registry.ts`),
-  ставят HttpOnly куку через `shared/api/token.ts`, при `401` client делает refresh (`/v2/auth/refresh`), токен
-  обновляется.
-- Валидация входных/выходных данных рядом с эндпоинтами (zod-схемы в `features/auth/model/contracts.ts`).
-- Транспорт можно заменить (GraphQL и т.п.): реализуйте `AuthService` и укажите `AUTH_TRANSPORT` в env, либо поменяйте
-  привязку в `service-registry.ts`.
+- Server-side запросы идут через `src/shared/api/rest/server-client.ts` (baseURL, `credentials: 'include'`,
+  `cache: 'no-store'`, нормализация ошибок, zod-валидация ответов, refresh по `401`).
+- Browser-side запросы идут через `src/shared/api/rest/client.ts` (без refresh и без работы с cookie-токеном).
+- Аутентификация: use-cases в `features/auth/model/use-cases.ts` получают `AuthService` и `SessionService` через DI из
+  `features/auth/service/registry.ts`. Сессия ставится через `shared/api/cookie-token.ts`.
+- Валидация входных/выходных данных рядом с эндпоинтами (zod-схемы в `features/auth/service/contracts.ts`).
+- Транспорт можно заменить: реализуйте `AuthService` и укажите `AUTH_TRANSPORT` в env, либо поменяйте привязку в
+  `features/auth/service/registry.ts`. Для сессии аналогично — через `SESSION_TRANSPORT`.
 
 ## UI/UX
 
@@ -52,8 +54,9 @@ Next.js 16 app with server actions, TailwindCSS v4 + DaisyUI, typed API layer, a
 
 ## Как расширять
 
-- Новая фича: создавайте `src/features/<name>` с `api/`, `actions/`, `ui/` и типами в `src/entities/<domain>`.
-- Новые эндпоинты: добавляйте схемы (zod) рядом с вызовом API и используйте `apiRequest` для типобезопасности.
+- Новая фича: создавайте `src/features/<name>` с `service/`, `actions/`, `ui/`, `model/`.
+- Новые эндпоинты: добавляйте схемы (zod) рядом с вызовом API и используйте `apiRequest` из
+  `shared/api/rest/server-client.ts` (server) или `shared/api/rest/client.ts` (browser) для типобезопасности.
 - Общие утилиты и конфиг — в `src/shared`.
 - Auth/Server actions: Next 16 требует async-работы с cookies — в server actions всегда `await` функции из
   `shared/api/token.ts` (они сами делают `await cookies()`). Ошибки показываются тостами (ToastProvider, позиция
@@ -73,17 +76,16 @@ Next.js 16 app with server actions, TailwindCSS v4 + DaisyUI, typed API layer, a
 ### Новая фича
 
 1. Создайте каталог `src/features/<name>/` со стандартными подпапками:
-    - `model/` — контракты (zod-схемы), интерфейсы сервисов, use-cases, view-model (маппинг ошибок/стейта).
-    - `api/` — адаптеры транспорта (например, `rest-*.service.ts`), которые реализуют интерфейсы из `model`.
-    - `actions/` — server actions/use-cases, которые используют сервисы через реестр/инъекцию.
+    - `model/` — доменные типы, интерфейсы сервисов, use-cases, view-model (маппинг ошибок/стейта).
+    - `service/` — адаптеры транспорта (например, `rest-*.service.ts`), которые реализуют интерфейсы из `model`.
+    - `actions/` — server actions, которые валидируют input и инжектят сервисы в use-cases.
     - `ui/` — React-компоненты фичи (клиентские/серверные).
-2. В `model` опишите схемы входа/выхода для эндпоинтов. В `api` используйте `shared/api/client.ts` с `schema` для
+2. В `service` опишите схемы входа/выхода для эндпоинтов. Используйте `shared/api/rest/server-client.ts` с `schema` для
    валидации ответов.
-3. Добавьте реестр/фабрику для транспортов, если нужен выбор (по аналогии с `features/auth/model/service-registry.ts`).
+3. Добавьте реестр для транспортов, если нужен выбор (по аналогии с `features/auth/service/registry.ts`).
 4. Подключите фичу в маршруте из `app/`, минимизируя бизнес-логику в файлах страницы.
 
-### Новая сущность (entity)
+### Доменные типы
 
-1. В `src/entities/<domain>/` создайте файл(ы) с типами/моделями (например, `user.types.ts`).
-2. Экспортируйте доменные типы, не завязывая их на конкретный транспорт или UI.
-3. Используйте эти типы в фичах (`features/<name>`) и адаптерах API для типобезопасности.
+1. Если домен живет в одной фиче — храните типы в `features/<name>/model/types.ts`.
+2. Если домен переиспользуется между фичами — вынесите его в `shared/model` или заведите `src/entities/<domain>`.

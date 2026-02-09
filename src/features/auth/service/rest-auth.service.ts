@@ -1,8 +1,8 @@
-import { apiRequest } from '@/shared/api/client';
-import { AuthResponse, authResponseSchema } from '@/features/auth/api/contracts';
-import { AuthService, AuthServiceResult } from '@/features/auth/model/service';
+import { apiRequest } from '@/shared/api/rest/server-client';
+import { AuthResponse, authResponseSchema } from '@/features/auth/service/contracts';
+import { AuthService, AuthServiceResult } from '@/features/auth/model/service.interface';
 import type { AuthCredentials } from '@/features/auth/model/types';
-import { mapUnknownResponseErrors } from '@/shared/api/map-error-response';
+import { mapUnknownResponseErrors } from '@/shared/api/rest/map-error-response';
 
 const mapResponse = (response: { ok: boolean; data: AuthResponse | null; error?: string }) => {
   if (response.ok && response.data && 'accessToken' in response.data) {
