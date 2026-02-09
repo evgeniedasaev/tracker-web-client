@@ -34,7 +34,7 @@ export function WorkoutFull({ workoutId, action }: WorkoutProps) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [action, workoutId]);
 
   if (loading) return <div>Загрузка...</div>;
   if (error) return <div>{error}</div>;

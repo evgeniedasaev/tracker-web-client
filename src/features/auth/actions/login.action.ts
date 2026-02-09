@@ -1,4 +1,4 @@
-import { createAuthAction } from '@/features/auth/model/use-cases';
+import { createLoginAction } from '@/features/auth/model/use-cases';
 import type { AuthState } from '@/features/auth/model/view-model';
 import type { AuthCredentials } from '@/features/auth/model/types';
 import { buildStateFromValidation } from '@/shared/model/view-model';
@@ -8,8 +8,8 @@ import { redirect } from 'next/navigation';
 
 export type LoginState = AuthState;
 
-const login = createAuthAction({
-  authServiceMethod: getAuthService().login,
+const login = createLoginAction({
+  authService: getAuthService(),
   sessionService: getSessionService(),
   defaultErrorMessage: 'Login failed',
 });

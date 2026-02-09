@@ -4,6 +4,7 @@ import { getWorkoutsService } from '@/features/workouts/service/registry';
 
 const getById = createGetByIdAction({
   workoutsService: getWorkoutsService(),
+  defaultErrorMessage: 'Workout not found',
 });
 
 export async function getByIdAction(

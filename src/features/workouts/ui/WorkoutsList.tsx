@@ -33,7 +33,7 @@ export function WorkoutsList({ action }: WorkoutsListProps) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [action]);
 
   if (loading) return <div>Загрузка...</div>;
   if (error) return <div>{error}</div>;

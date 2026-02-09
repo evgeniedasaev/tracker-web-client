@@ -1,4 +1,4 @@
-import { createAuthAction } from '@/features/auth/model/use-cases';
+import { createSignUpAction } from '@/features/auth/model/use-cases';
 import type { AuthState } from '@/features/auth/model/view-model';
 import type { AuthCredentials } from '@/features/auth/model/types';
 import { buildStateFromValidation } from '@/shared/model/view-model';
@@ -8,8 +8,8 @@ import { redirect } from 'next/navigation';
 
 export type SignupState = AuthState;
 
-const signup = createAuthAction({
-  authServiceMethod: getAuthService().signup,
+const signup = createSignUpAction({
+  authService: getAuthService(),
   sessionService: getSessionService(),
   defaultErrorMessage: 'Registration failed',
 });

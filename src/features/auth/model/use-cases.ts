@@ -5,18 +5,35 @@ import { mapErrorServiceResultToState } from '@/shared/model/view-model';
 import type { AuthCredentials } from '@/features/auth/model/types';
 
 type UseCaseConfig = {
-  authServiceMethod: AuthService['login'] | AuthService['signup'];
+  authService: AuthService;
   sessionService: SessionService;
   defaultErrorMessage?: string;
 };
 
-export function createAuthAction({
-  authServiceMethod,
+export function createLoginAction({
+  authService,
   sessionService,
   defaultErrorMessage,
 }: UseCaseConfig) {
-  return async function authAction(credentials: AuthCredentials): Promise<AuthState> {
-    const result = await authServiceMethod(credentials);
+  return async function loginAction(credentials: AuthCredentials): Promise<AuthState> {
+    const result = await authService.login(credentials);
+
+    if (result.ok) {
+      await sessionService.setAccessToken(result.accessToken);
+      return { success: true };
+    }
+
+    return mapErrorServiceResultToState(result, defaultErrorMessage);
+  };
+}
+
+export function createSignUpAction({
+  authService,
+  sessionService,
+  defaultErrorMessage,
+}: UseCaseConfig) {
+  return async function signUpAction(credentials: AuthCredentials): Promise<AuthState> {
+    const result = await authService.signup(credentials);
 
     if (result.ok) {
       await sessionService.setAccessToken(result.accessToken);

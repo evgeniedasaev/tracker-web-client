@@ -4,6 +4,7 @@ import { getWorkoutsService } from '@/features/workouts/service/registry';
 
 const list = createListAction({
   workoutsService: getWorkoutsService(),
+  defaultErrorMessage: 'Failed to load workouts',
 });
 
 export async function listAction(prevState: WorkoutsListState): Promise<WorkoutsListState> {
