@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useToast } from '@/shared/ui/toast/useToast';
 
 type ToastNotifierProps = {
@@ -10,9 +10,12 @@ type ToastNotifierProps = {
 
 export function ToastNotifier({ message, type }: ToastNotifierProps) {
   const { notify } = useToast();
+  const handledRef = useRef(false);
 
   useEffect(() => {
-    if (message) notify(message, type);
+    if (!message || handledRef.current) return;
+    handledRef.current = true;
+    notify(message, type);
   }, [message, notify, type]);
 
   return null;

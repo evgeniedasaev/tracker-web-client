@@ -7,6 +7,7 @@ import { SubmitButton } from '@/features/auth/ui/SubmitButton';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/20/solid';
 import { useAuthForm } from '@/features/auth/ui/useAuthForm';
 import { useFormStatus } from 'react-dom';
+import { AuthSidePanel } from '@/shared/ui/pages';
 
 type AuthFormProps = {
   title: string;
@@ -53,7 +54,7 @@ function FormFields({
         onChange={(event) => onChange('email', event.target.value)}
         onInput={(event) => onChange('email', event.currentTarget.value)}
         onBlur={() => onBlur('email')}
-        className={`input ${errors.email ? 'input-error' : ''}`}
+        className={`input w-full ${errors.email ? 'input-error' : ''}`}
         placeholder="you@example.com"
         required
       />
@@ -121,29 +122,39 @@ export function AuthForm({ title, cta, pendingLabel, action }: AuthFormProps) {
   }, [fieldErrors, syncServerErrors]);
 
   return (
-    <div className="hero bg-base-200 min-h-screen">
-      <div className="hero-content text-center">
-        <div className="max-w-md w-full">
-          <h1 className="text-5xl font-bold">{title}</h1>
-          <div className="divider" />
-          <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-            <form className="card-body" action={formAction} onSubmit={handleSubmit}>
-              <FormFields
-                values={values}
-                errors={displayErrors}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                showPassword={showPassword}
-                onTogglePassword={togglePassword}
-                pendingLabel={pendingLabel}
-                cta={cta}
-                emailRef={emailRef}
-                passwordRef={passwordRef}
-              />
-            </form>
+    <section className="relative min-h-screen bg-base-200">
+      <div className="pointer-events-none absolute inset-0 opacity-50">
+        <div className="absolute -top-24 right-8 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
+        <div className="absolute -bottom-32 left-8 h-80 w-80 rounded-full bg-secondary/20 blur-3xl" />
+      </div>
+      <div className="relative mx-auto flex min-h-screen w-full max-w-6xl items-center justify-center px-6 py-16">
+        <div className="grid w-full max-w-5xl gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <AuthSidePanel />
+
+          <div className="card bg-base-100/90 shadow-2xl backdrop-blur">
+            <div className="card-body">
+              <div className="mb-4">
+                <h2 className="text-xl font-semibold text-base-content">{cta}</h2>
+                <p className="text-sm text-base-content/60">Use your email and password.</p>
+              </div>
+              <form className="space-y-2" action={formAction} onSubmit={handleSubmit}>
+                <FormFields
+                  values={values}
+                  errors={displayErrors}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  showPassword={showPassword}
+                  onTogglePassword={togglePassword}
+                  pendingLabel={pendingLabel}
+                  cta={cta}
+                  emailRef={emailRef}
+                  passwordRef={passwordRef}
+                />
+              </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

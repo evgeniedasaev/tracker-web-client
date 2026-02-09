@@ -1,15 +1,14 @@
 import { Metadata } from 'next';
-import { HomeHero } from '@/shared/ui/pages';
+import { HomeHeroPrivate, HomeHeroPublic } from '@/shared/ui/pages';
+import { isAuthenticatedQuery } from '@/features/auth';
 
 export const metadata: Metadata = {
-  title: 'Tracker',
-  description: 'Welcome to tracker app',
+  title: 'Forge',
+  description: 'Welcome to Forge',
 };
 
-export default function HomePage() {
-  return (
-    <main>
-      <HomeHero />
-    </main>
-  );
+export default async function HomePage() {
+  const authenticated = await isAuthenticatedQuery();
+
+  return <main>{authenticated ? <HomeHeroPrivate /> : <HomeHeroPublic />}</main>;
 }

@@ -2,15 +2,16 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ToastProvider } from '@/shared/ui/toast';
 import { AppShell } from '@/shared/ui/layout';
-import { navigationSections } from '@/app/navigation.config';
+import { isAuthenticatedQuery } from '@/features/auth';
+import { getNavigationSections } from '@/app/navigation.config';
 import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Tracker',
-    template: '%s | Tracker',
+    default: 'Forge',
+    template: '%s | Forge',
   },
-  description: 'Tracker helps you organize your muscle-building journey.',
+  description: 'Forge helps you organize your muscle-building journey.',
 };
 
 const geistSans = Geist({
@@ -23,10 +24,15 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const authenticated = await isAuthenticatedQuery();
+  const navigationSections = getNavigationSections(authenticated);
+
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="en" className="h-full">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-base-200`}
+      >
         <ToastProvider>
           <AppShell navigationSections={navigationSections}>{children}</AppShell>
         </ToastProvider>

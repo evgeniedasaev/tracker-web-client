@@ -1,15 +1,15 @@
 import Link from 'next/link';
 import { BoltIcon, ShieldCheckIcon, SparklesIcon } from '@heroicons/react/20/solid';
 
-type HomeHeroProps = {
+type HomeHeroPublicProps = {
   title?: string;
   description?: string;
 };
 
-export function HomeHero({
+export function HomeHeroPublic({
   title = 'Welcome to Forge',
   description = 'Plan, log, and improve every session with clarity and momentum.',
-}: HomeHeroProps) {
+}: HomeHeroPublicProps) {
   return (
     <section className="relative overflow-hidden bg-base-200">
       <div className="pointer-events-none absolute inset-0">
